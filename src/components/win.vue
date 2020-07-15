@@ -5,7 +5,7 @@
     </div>
 </template>
 <script>
-import tree from "./tree.vue";
+import tree from "./tree";
 export default {
     name:"win",
     components:{
@@ -13,7 +13,7 @@ export default {
     },
     props:{
         id: String,//pid
-        type: String,//is fullscreen
+        type: String,//is fullscreen,full/win
         pid: String
     },
     data: function(){
@@ -21,17 +21,10 @@ export default {
             trees:{}
         }
     },
-    created: ()=>{
-        //see if the local tree have this node and return data directly
-        //if not use pid to fetch tree
-
-        //add listener of closing method
-        //add listener of move method
+    created(){
     },
     methods:{
         close:function(){
-        },
-        move:function(){
         }
     }
 }

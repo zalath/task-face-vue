@@ -1,5 +1,5 @@
 import axios from "axios";
-import ROAST_CONFIG from "config.js";
+import ROAST_CONFIG from "./config.js";
 import qs from "qs";
 export default {
   get: function(url) {
