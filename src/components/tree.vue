@@ -1,40 +1,42 @@
 <template>
     <div>
         <div v-for="(el,i) in els" :key="i">
-            <!-- <line :el="el"></line> -->
-            {{el.title}}
+            <el :el=el></el>
         </div>
     </div>
 </template>
 <script>
-// import line from "./line"
+import el from "./el"
+import req from "../assets/req"
 export default {
     name:"tree",
     components:{
-        // line
+        el
     },
     props:{
         pid: String
     },
     data: function(){
-        return {}
+        return {
+            els:[]
+        }
     },
     created(){
+        this.loadEls();
         //add listener of closing method
         //add listener of move method
     },
     methods:{
         loadEls:function(){
-            this.$store.commit("setcur",{'id':this.pid,'type':'list'})
-            this.$store.dispatch("getEls");
+            req.post('list',{id:'0'})
+            .then((res)=>{
+                this.els = res.data
+            })
         }
     },
     computed:{
-        els(){
-            this.loadEls();
-            this.$store.commit("setcur",{'id':this.pid})
-            return this.$store.getters.getEls
-        }
+    },
+    watch:{
     }
 }
 </script>

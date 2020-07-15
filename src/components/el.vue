@@ -6,11 +6,11 @@
 </template>
 <script>
 export default {
-    name:"line",
+    name:"el",
     components:{
     },
     props:{
-        el: {},//pid
+        el: {},
     },
     data: function(){
         return {

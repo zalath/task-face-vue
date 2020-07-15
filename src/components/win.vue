@@ -1,7 +1,7 @@
 <template>
     <div>
         <div></div>
-        <tree :pid="this.id"></tree>
+        <tree :pid="this.treeid"></tree>
     </div>
 </template>
 <script>
@@ -15,6 +15,13 @@ export default {
         id: String,//pid
         type: String,//is fullscreen,full/win
         pid: String
+    },
+    computed:{
+        treeid(){
+            if(this.id == undefined)
+            return '0'
+            else return this.id
+        }
     },
     data: function(){
         return {
