@@ -1,26 +1,97 @@
 <template>
-    <div>
-        <span>{{el.id}}</span>
-        <span>{{el.title}}</span>
+    <div class="line">
+        <div>
+        <span>{{el.id}}</span>-
+        <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#edit'+el.id">{{el.title}}</button>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+        <span v-if="isOpenNew" v-on:click="openNew('list')">[+]</span>
+        <span v-if="isOpen" v-on:click="open()">[+]</span>
+        <span v-if="isFold" v-on:click="fold()">[-]</span>
+        </div>
+        <template v-if="isShowChild">
+            <div v-for="(elc,i) in el.Child" :key="i">
+                <el :el=elc :type=type :pid=el.id></el>
+            </div>
+        </template>
+        <edit :pid=el.pid :el=el></edit>
     </div>
 </template>
 <script>
+import req from "../assets/req"
+import edit from "./edit"
 export default {
     name:"el",
     components:{
+        edit
     },
     props:{
+        type: String,
         el: {},
     },
     data: function(){
         return {
+            isOpenNew: true,//if this point is opend
+            isShowChild:false,
+            isOpen: false,
+            isFold: false
         }
     },
-    created: ()=>{
+    created(){
+        if(this.el.ct == 0){
+            this.isOpen = false;
+            this.isOpenNew = false;
+            this.isFold = false;
+        }
+        //if do not have next level,or is already opened
+        if(this.el.ct > 0 && this.el.Child != null && this.el.Child.length > 0){
+            this.isOpenNew = false;
+            this.isOpen = false;
+            this.isFold = true;
+        }
+        if(this.el.Child != null)
+            this.isShowChild = true
     },
     methods:{
-        tomove:function(){
+        toAdd:function(){
+
+        },
+        toMove:function(){
+
+        },
+        move:function(){
+
+        },
+        toDelete:function(){
+
+        },
+        delete:function(){
+        },
+        openNew:function(type){
+            req.post(type,{id:this.el.id})
+            .then((res)=>{
+                this.el.Child = res.data
+                this.isShowChild = true
+                this.isOpenNew = false;
+                this.isOpen = false;
+                this.isFold = true;
+            })
+        },
+        open:function(){
+            this.isShowChild = true
+            this.isOpen = false
+            this.isFold = true
+        },
+        fold:function(){
+            this.isShowChild = false
+            this.isOpen = true
+            this.isFold = false
         }
     }
 }
 </script>
+<style scoped>
+.line{
+    text-align:left;
+    margin:10px 40px;
+}
+</style>

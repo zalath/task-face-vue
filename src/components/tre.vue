@@ -1,38 +1,32 @@
 <template>
-    <div>
+    <div class="tree">
         <div v-for="(el,i) in els" :key="i">
-            <el :el=el></el>
+            <el :el=el :type=type :pid=pid></el>
         </div>
     </div>
 </template>
 <script>
 import el from "./el"
-import req from "../assets/req"
+// import req from "../assets/req"
 export default {
-    name:"tree",
+    name:"tre",
     components:{
         el
     },
     props:{
-        pid: String
+        pid: Number,
+        type: String,
+        els: Array
     },
     data: function(){
         return {
-            els:[]
         }
     },
     created(){
-        this.loadEls();
         //add listener of closing method
         //add listener of move method
     },
     methods:{
-        loadEls:function(){
-            req.post('list',{id:'0'})
-            .then((res)=>{
-                this.els = res.data
-            })
-        }
     },
     computed:{
     },
@@ -40,3 +34,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.tree{
+    margin-left:20px;
+}
+</style>

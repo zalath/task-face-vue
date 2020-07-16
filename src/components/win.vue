@@ -1,37 +1,45 @@
 <template>
     <div>
         <div></div>
-        <tree :pid="this.treeid"></tree>
+        <tre :pid=this.treeid :type="'space'" :els=els></tre>
     </div>
 </template>
 <script>
-import tree from "./tree";
+import req from "../assets/req"
+import tre from "./tre";
 export default {
     name:"win",
     components:{
-        tree
+        tre
     },
     props:{
-        id: String,//pid
         type: String,//is fullscreen,full/win
-        pid: String
+        etype: String,//els's list's type
+        pid: Number
     },
     computed:{
         treeid(){
-            if(this.id == undefined)
-            return '0'
-            else return this.id
+            if(this.pid == undefined)
+            return 0
+            else return this.pid
         }
     },
     data: function(){
         return {
-            trees:{}
+            els:[]
         }
     },
     created(){
+        this.loadEls()
     },
     methods:{
         close:function(){
+        },
+        loadEls:function(){
+            req.post(this.etype,{id:'0'})
+            .then((res)=>{
+                this.els = res.data
+            })
         }
     }
 }
