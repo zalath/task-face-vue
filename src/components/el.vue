@@ -3,26 +3,35 @@
         <div>
         <span>{{el.id}}</span>-
         <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#edit'+el.id">{{el.title}}</button>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-        <span v-if="isOpenNew" v-on:click="openNew('list')">[+]</span>
-        <span v-if="isOpen" v-on:click="open()">[+]</span>
+        
+        <span v-if="isOpenNew" v-on:click="openNew('list')">[{{el.ct}}]</span>
+        <span v-if="isOpen" v-on:click="open()">[{{el.ct}}]</span>
         <span v-if="isFold" v-on:click="fold()">[-]</span>
+        
+        <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">[ADD]</button>
+        <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">[DEL]</button>
         </div>
         <template v-if="isShowChild">
             <div v-for="(elc,i) in el.Child" :key="i">
                 <el :el=elc :type=type :pid=el.id></el>
             </div>
         </template>
-        <edit :pid=el.pid :el=el></edit>
+
+        <edit :pid=el.pid :el=el :type="'edit'"></edit>
+        <edit :pid=el.id :el=el :type="'new'"></edit>
+        <dele :el=el ></dele>
+    
     </div>
 </template>
 <script>
 import req from "../assets/req"
 import edit from "./edit"
+import dele from "./dele"
 export default {
     name:"el",
     components:{
-        edit
+        edit,
+        dele
     },
     props:{
         type: String,
@@ -39,7 +48,7 @@ export default {
     created(){
         if(this.el.ct == 0){
             this.isOpen = false;
-            this.isOpenNew = false;
+            // this.isOpenNew = false;
             this.isFold = false;
         }
         //if do not have next level,or is already opened
