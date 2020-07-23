@@ -3,7 +3,7 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel">Deleting</h5>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                     </button>
@@ -29,10 +29,10 @@ export default {
     methods:{
         del:function(){
             $('#del'+this.el.id).modal('toggle')
-            req.post('del',{"id":this.el.id})
+            req.post('del',{id:this.el.id})
             .then((res)=>{
                 if(res.data != "mis"){
-                    delete(this.el);
+                    this.$bus.emit('delc'+this.el.pid,{cid:this.el.id})
                 }
             })
         }

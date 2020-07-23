@@ -4,9 +4,9 @@
         <span>{{el.id}}</span>-
         <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#edit'+el.id">{{el.title}}</button>
         
-        <span v-if="isOpenNew" v-on:click="openNew('list')">[{{el.ct}}]</span>
-        <span v-if="isOpen" v-on:click="open()">[{{el.ct}}]</span>
-        <span v-if="isFold" v-on:click="fold()">[-]</span>
+        <span class="showhide" v-if="isOpenNew" v-on:click="openNew('list')">[{{el.ct}}]</span>
+        <span class="showhide" v-if="isOpen" v-on:click="open()">[{{el.ct}}]</span>
+        <span class="showhide" v-if="isFold" v-on:click="fold()">[-]</span>
         
         <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">[ADD]</button>
         <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">[DEL]</button>
@@ -59,21 +59,19 @@ export default {
         }
         if(this.el.Child != null)
             this.isShowChild = true
+        this.$bus.on('delc'+this.el.id,this.delc)
     },
     methods:{
-        toAdd:function(){
-
-        },
         toMove:function(){
 
         },
         move:function(){
 
         },
-        toDelete:function(){
-
-        },
-        delete:function(){
+        delc:function(dat){//when child is deleted
+            var i = this.el.Child.map(item => item.id).indexOf(dat.cid)
+            this.el.Child.splice(i,1)
+            this.el.ct -= 1;
         },
         openNew:function(type){
             req.post(type,{id:this.el.id})
@@ -102,5 +100,8 @@ export default {
 .line{
     text-align:left;
     margin:10px 40px;
+}
+.showhide{
+    cursor: pointer;
 }
 </style>
