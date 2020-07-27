@@ -39,3 +39,8 @@ export default {
     }
 }
 </script>
+<style scoped>
+.modal{
+    color:black;
+}
+</style>

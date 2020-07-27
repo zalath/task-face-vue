@@ -1,16 +1,15 @@
 <template>
-    <div class="line">
-        <div>
-        <span>{{el.id}}</span>-
-        <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#edit'+el.id">{{el.title}}</button>
-        
-        <span class="showhide" v-if="isOpen" v-on:click="open('list')">[{{el.ct}}]</span>
-        <span class="showhide" v-if="isFold" v-on:click="fold()">[-]</span>
+    <div class="line container">
+        <div class="row">
+            <button type="button" class="btn btn-primary col-sm-5" data-toggle="modal" :data-target="'#edit'+el.id">{{el.id}}-{{el.title}}</button>
+            
+            <span class="showhide btn btn-primary" v-if="isOpen" v-on:click="open('list')">[{{el.ct}}]</span>
+            <span class="showhide btn btn-primary" v-if="isFold" v-on:click="fold()">[-]</span>
 
-        <span class="showhide" v-if="isOpenWin" v-on:click="openWin('list')">>></span>
-        
-        <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">[ADD]</button>
-        <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">[DEL]</button>
+            <span class="showhide btn btn-primary" v-if="isOpenWin" v-on:click="openWin('list')">>></span>
+            
+            <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
+            <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
         </div>
         <template v-if="isShowChild">
             <div v-for="(elc,i) in el.Child" :key="i">
@@ -50,6 +49,7 @@ export default {
         if(this.el.ct == 0){
             this.isOpen = false;
             this.isFold = false;
+            this.isOpenWin = false;
         }
         //if do not have next level,or is already opened
         if(this.el.ct > 0 && this.el.Child != null && this.el.Child.length > 0){
@@ -89,9 +89,7 @@ export default {
             this.isFold = false
         },
         openWin:function(type){
-            this.el.type='win'
-            this.el.etype = type
-            this.$bus.emit('openwin',this.el)
+            this.$bus.emit('openwin',{type:'win',etype:type,pid:this.el.id,title:this.el.title})
         }
     }
 }
