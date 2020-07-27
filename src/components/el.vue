@@ -4,9 +4,10 @@
         <span>{{el.id}}</span>-
         <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#edit'+el.id">{{el.title}}</button>
         
-        <span class="showhide" v-if="isOpenNew" v-on:click="openNew('list')">[{{el.ct}}]</span>
-        <span class="showhide" v-if="isOpen" v-on:click="open()">[{{el.ct}}]</span>
+        <span class="showhide" v-if="isOpen" v-on:click="open('list')">[{{el.ct}}]</span>
         <span class="showhide" v-if="isFold" v-on:click="fold()">[-]</span>
+
+        <span class="showhide" v-if="isOpenWin" v-on:click="openWin('list')">>></span>
         
         <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">[ADD]</button>
         <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">[DEL]</button>
@@ -39,21 +40,19 @@ export default {
     },
     data: function(){
         return {
-            isOpenNew: true,//if this point is opend
             isShowChild:false,
-            isOpen: false,
+            isOpenWin:true,
+            isOpen: true,
             isFold: false
         }
     },
     created(){
         if(this.el.ct == 0){
             this.isOpen = false;
-            // this.isOpenNew = false;
             this.isFold = false;
         }
         //if do not have next level,or is already opened
         if(this.el.ct > 0 && this.el.Child != null && this.el.Child.length > 0){
-            this.isOpenNew = false;
             this.isOpen = false;
             this.isFold = true;
         }
@@ -73,17 +72,13 @@ export default {
             this.el.Child.splice(i,1)
             this.el.ct -= 1;
         },
-        openNew:function(type){
-            req.post(type,{id:this.el.id})
-            .then((res)=>{
-                this.el.Child = res.data
-                this.isShowChild = true
-                this.isOpenNew = false;
-                this.isOpen = false;
-                this.isFold = true;
-            })
-        },
-        open:function(){
+        open:function(type){
+            if(this.el.Child == null){
+                req.post(type,{id:this.el.id})
+                .then((res)=>{
+                    this.el.Child = res.data
+                })
+            }
             this.isShowChild = true
             this.isOpen = false
             this.isFold = true
@@ -92,6 +87,11 @@ export default {
             this.isShowChild = false
             this.isOpen = true
             this.isFold = false
+        },
+        openWin:function(type){
+            this.el.type='win'
+            this.el.etype = type
+            this.$bus.emit('openwin',this.el)
         }
     }
 }

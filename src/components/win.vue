@@ -26,20 +26,27 @@ export default {
     },
     data: function(){
         return {
-            els:[]
+            els:[],
+            zindex:1
         }
     },
     created(){
         this.loadEls()
+        this.$bus.on('showwin',this.show)
     },
     methods:{
         close:function(){
+            this.$bus.emit('closewin',this.pid);
         },
         loadEls:function(){
             req.post(this.etype,{id:'0'})
             .then((res)=>{
                 this.els = res.data
             })
+        },
+        show:function(pid){
+            if(this.pid == pid)this.zindex = 10;
+            else this.zidnex=5;
         }
     }
 }
