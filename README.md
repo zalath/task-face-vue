@@ -1,24 +1,10 @@
 # task-face-vue
 
-## Project setup
-```
-npm install
-```
+## easy take front end with vue
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## porpuse
+- easy CRUD of tasks /fin
+- display child with window or tree /fin
+- child window movable /fin
+- child window highlight /ing
+- child window minimize to the left buttom

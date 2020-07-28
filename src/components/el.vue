@@ -6,7 +6,7 @@
             <span class="showhide btn btn-primary" v-if="isOpen" v-on:click="open('list')">[{{el.ct}}]</span>
             <span class="showhide btn btn-primary" v-if="isFold" v-on:click="fold()">[-]</span>
 
-            <span class="showhide btn btn-primary" v-if="isOpenWin" v-on:click="openWin('list')">>></span>
+            <span class="showhide btn btn-primary" v-if="isOpenWin" v-hammer:tap="openWin">>></span>
             
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
@@ -16,22 +16,13 @@
                 <el :el=elc :type=type :pid=el.id></el>
             </div>
         </template>
-
-        <edit :pid=el.pid :el=el :type="'edit'"></edit>
-        <edit :pid=el.id :el=el :type="'new'"></edit>
-        <dele :el=el ></dele>
-    
     </div>
 </template>
 <script>
 import req from "../assets/req"
-import edit from "./edit"
-import dele from "./dele"
 export default {
     name:"el",
     components:{
-        edit,
-        dele
     },
     props:{
         type: String,
@@ -59,6 +50,7 @@ export default {
         if(this.el.Child != null)
             this.isShowChild = true
         this.$bus.on('delc'+this.el.id,this.delc)
+        this.$bus.emit('addhandle',this.el)
     },
     methods:{
         toMove:function(){
@@ -79,18 +71,20 @@ export default {
                     this.el.Child = res.data
                 })
             }
-            this.isShowChild = true
-            this.isOpen = false
-            this.isFold = true
+            this.show(true,false,true)
         },
         fold:function(){
-            this.isShowChild = false
-            this.isOpen = true
-            this.isFold = false
+            this.show(false,true,false)
         },
-        openWin:function(type){
-            this.$bus.emit('openwin',{type:'win',etype:type,pid:this.el.id,title:this.el.title})
+        openWin:function(e){
+            this.$bus.emit('openwin',{type:'win',etype:'list',pid:this.el.id,title:this.el.title,mousepoz:e.center})
+        },
+        show(isShowChild,isOpen,isFold){
+            this.isShowChild = isShowChild
+            this.isOpen = isOpen
+            this.isFold = isFold
         }
+
     }
 }
 </script>

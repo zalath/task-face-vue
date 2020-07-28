@@ -1,13 +1,14 @@
 <template>
     <div :class=wintype :style=style v-hammer:pan="pan" v-hammer:panend="panend" v-hammer:tap="tap">
-        <div class="winbar">
-            <span class="title">{{title}}</span>
+        <div class="winbar d-flex">
+            <div class="title p-2 flex-grow-1">{{title}}</div>
             <div v-if="pid != 0" class="barbtns">
                 <a class="btn btn-danger" v-on:click="minimize">_</a>
+                <a class="btn btn-danger" v-on:click="normalize">□</a>
                 <a class="btn btn-danger" v-on:click="close">x</a>
             </div>
         </div>
-        <tre :pid=this.treeid :type="'space'" :els=els></tre>
+        <tre v-show="isShowTree" :pid=this.treeid :type="'space'" :els=els></tre>
     </div>
 </template>
 <script>
@@ -23,7 +24,8 @@ export default {
         etype: String,//els's list's type
         pid: Number,
         poz: Number,
-        title: String
+        title: String,
+        mousepoz: {x:0,y:0}
     },
     computed:{
         treeid(){
@@ -32,10 +34,14 @@ export default {
             else return this.pid
         },
         wintype(){
-            return "window "+this.type;
+            var c = ''
+            if(this.type == 'win'){
+                c = 'container'
+            }
+            return "window "+this.type+" "+c;
         },
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex}
+            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W+'%'}
         }
     },
     data: function(){
@@ -45,14 +51,20 @@ export default {
             Y:10,
             zIndex:1,
             pozX:10,
-            pozY:10
+            pozY:10,
+            W:50,
+            isShowTree:true
         }
     },
     created(){
         this.loadEls()
         this.$bus.on('showwin',this.show)
-        this.X += 10 * (this.poz -1)
-        this.Y += 10 * (this.poz -1)
+        this.$bus.emit('showwin',this.pid)
+        if(this.type == 'full')this.W = 100
+        this.X += 10 * (this.poz -1) + this.mousepoz.x - 60*this.poz
+        this.Y += 10 * (this.poz -1) + this.mousepoz.y - 20*this.poz
+        this.pozX += this.mousepoz.x -60*this.poz
+        this.pozY += this.mousepoz.y -20*this.poz
     },
     methods:{
         close:function(){
@@ -65,7 +77,7 @@ export default {
             })
         },
         show:function(pid){
-            console.log('show--'+pid)
+            // console.log('show--'+pid)
             if(this.pid == pid)this.zIndex = 2;
             else this.zIndex=1;
         },
@@ -83,6 +95,10 @@ export default {
             if(this.pid != 0)this.$bus.emit('showwin',this.pid)
         },
         minimize:function(){
+            this.isShowTree = false
+        },
+        normalize:function(){
+            this.isShowTree = true
         }
     }
 }
@@ -96,16 +112,16 @@ export default {
 }
 .win{
     position: absolute;
-    width:50%;
+    /* width:50%; */
 }
 .full{
     position: absolute;;
-    width:100%;
+    /* width:100%; */
     height:100%;
     border:none;
 }
 .winbar{
-    width:100%;
+    width:100% !important;
     background-color:black;
     cursor:pointer;
 }
@@ -113,6 +129,6 @@ export default {
     color:white;
 }
 .barbtns{
-    float:right;
+    margin-right:-15px;
 }
 </style>

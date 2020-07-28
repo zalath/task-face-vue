@@ -1,27 +1,38 @@
 <template>
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
-      <win v-for="(w,i) in wins" :key=w.pid :type=w.type :pid=w.pid :etype=w.etype :poz=i :title=w.title></win>
+    <win v-for="(w,i) in wins" :key="'win'+w.pid" :type=w.type :pid=w.pid :etype=w.etype :poz=i :title=w.title :mousepoz=w.mousepoz></win>
+    <div v-for="(h,j) in handles" :key="'handle'+j">
+      <edit :pid=h.pid :el=h :type="'edit'"></edit>
+      <edit :pid=h.id :el=h :type="'new'"></edit>
+      <dele :el=h ></dele>
+    </div>
   </div>
 </template>
 
 <script>
 import win from "./components/win"
+import edit from "./components/edit"
+import dele from "./components/dele"
 
 export default {
   name: 'App',
   components: {
-    win
+    win,
+    edit,
+    dele
   },
   data:function(){
     return {
-      wins:[]
+      wins:[],
+      handles:[]
     }
   },
   created:function(){
-    this.wins.push({type:'full',pid:0,etype:'list',title:''})
+    this.wins.push({type:'full',pid:0,etype:'list',title:'',mousepoz:{x:0,y:0}})
     this.$bus.on('openwin',this.openWin)
     this.$bus.on('closewin',this.closeWin)
+    this.$bus.on('addhandle',this.addHandle)
   },
   methods:{
     openWin:function(el){
@@ -35,6 +46,9 @@ export default {
     closeWin:function(pid){
       var i = this.wins.map(item => item.pid).indexOf(pid)
       this.wins.splice(i,1);
+    },
+    addHandle:function(el){
+      this.handles.push(el)
     }
   }
 }
