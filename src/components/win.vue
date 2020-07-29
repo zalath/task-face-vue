@@ -41,7 +41,7 @@ export default {
             return "window "+this.type+" "+c;
         },
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W+'%'}
+            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W+'%',border:this.border}
         }
     },
     data: function(){
@@ -53,6 +53,7 @@ export default {
             pozX:10,
             pozY:10,
             W:50,
+            border:"solid 1px red",
             isShowTree:true
         }
     },
@@ -78,8 +79,13 @@ export default {
         },
         show:function(pid){
             // console.log('show--'+pid)
-            if(this.pid == pid)this.zIndex = 2;
-            else this.zIndex=1;
+            if(this.pid == pid){
+                this.zIndex = 2;
+                this.border = "solid 1px white"
+                setTimeout(() => {
+                    this.border = "solid 1px red"
+                }, 1000);
+            }else this.zIndex=1;
         },
         pan:function(e){
             if(this.pid != 0){
@@ -108,7 +114,6 @@ export default {
     background-color:black;
     color:white;
     opacity: 0.9;
-    border:1px solid red;
 }
 .win{
     position: absolute;
