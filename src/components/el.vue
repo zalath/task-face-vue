@@ -6,14 +6,17 @@
             <span class="showhide btn btn-primary" v-if="isOpen" v-on:click="open('list')">[{{el.ct}}]</span>
             <span class="showhide btn btn-primary" v-if="isFold" v-on:click="fold()">[-]</span>
 
-            <span class="showhide btn btn-primary" v-if="isOpenWin" v-hammer:tap="openWin">>></span>
+            <template v-if="isOpenWin">
+            <span class="showhide btn btn-primary" v-if="isShowWin" v-hammer:tap="openWin">+>></span>
+            <span class="showhide btn btn-primary" v-else v-hammer:tap="openWin">>></span>
+            </template>
             
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
         </div>
         <template v-if="isShowChild">
             <div v-for="(elc,i) in el.Child" :key="i">
-                <el :el=elc :type=type :pid=el.id></el>
+                <el :el=elc :type=type></el>
             </div>
         </template>
     </div>
@@ -33,7 +36,8 @@ export default {
             isShowChild:false,
             isOpenWin:true,
             isOpen: true,
-            isFold: false
+            isFold: false,
+            isShowWin:false
         }
     },
     created(){
@@ -77,7 +81,12 @@ export default {
             this.show(false,true,false)
         },
         openWin:function(e){
+            this.isShowWin = true
+            this.$bus.on('closewin'+this.el.id,this.closewWin);
             this.$bus.emit('openwin',{type:'win',etype:'list',pid:this.el.id,title:this.el.title,mousepoz:e.center})
+        },
+        closeWin:function(){
+            this.isShowWin = false
         },
         show(isShowChild,isOpen,isFold){
             this.isShowChild = isShowChild

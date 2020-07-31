@@ -66,10 +66,12 @@ export default {
         this.Y += 10 * (this.poz -1) + this.mousepoz.y - 20*this.poz
         this.pozX += this.mousepoz.x -60*this.poz
         this.pozY += this.mousepoz.y -20*this.poz
+        this.$bus.on('delc'+this.pid,this.delc)
     },
     methods:{
         close:function(){
             this.$bus.emit('closewin',this.pid);
+            this.$bus.emit('closewin'+this.pid);
         },
         loadEls:function(){
             req.post(this.etype,{id:this.pid})
@@ -105,7 +107,11 @@ export default {
         },
         normalize:function(){
             this.isShowTree = true
-        }
+        },
+        delc:function(dat){//when child is deleted
+            var i = this.els.map(item => item.id).indexOf(dat.cid)
+            this.els.splice(i,1)
+        },
     }
 }
 </script>

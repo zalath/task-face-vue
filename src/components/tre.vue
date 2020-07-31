@@ -1,7 +1,7 @@
 <template>
     <div class="tree">
-        <div v-for="(el,i) in els" :key="i">
-            <el :el=el :type=type :pid=pid></el>
+        <div v-for="(el,i) in els" :key="'tree'+i">
+            <el :el=el :type=type></el>
         </div>
     </div>
 </template>
