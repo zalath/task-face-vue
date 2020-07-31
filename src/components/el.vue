@@ -53,8 +53,8 @@ export default {
         }
         if(this.el.Child != null)
             this.isShowChild = true
-        this.$bus.on('delc'+this.el.id,this.delc)
         this.$bus.emit('addhandle',this.el)
+        this.$bus.on('ct',this.ct)
     },
     methods:{
         toMove:function(){
@@ -62,11 +62,6 @@ export default {
         },
         move:function(){
 
-        },
-        delc:function(dat){//when child is deleted
-            var i = this.el.Child.map(item => item.id).indexOf(dat.cid)
-            this.el.Child.splice(i,1)
-            this.el.ct -= 1;
         },
         open:function(type){
             if(this.el.Child == null){
@@ -92,8 +87,13 @@ export default {
             this.isShowChild = isShowChild
             this.isOpen = isOpen
             this.isFold = isFold
+        },
+        ct:function(dat){
+            if(this.el.id == dat.id)
+            if(dat.type =='1')
+                this.el.ct +=1;
+            else this.el.ct -=1;
         }
-
     }
 }
 </script>

@@ -8,16 +8,18 @@
                 <a class="btn btn-danger" v-on:click="close">x</a>
             </div>
         </div>
-        <tre v-show="isShowTree" :pid=this.treeid :type="'space'" :els=els></tre>
+        <div v-for="(elc,i) in els" :key="i">
+            <el :el=elc :type="'list'"></el>
+        </div>
     </div>
 </template>
 <script>
 import req from "../assets/req"
-import tre from "./tre";
+import el from "./el";
 export default {
     name:"win",
     components:{
-        tre
+        el
     },
     props:{
         type: String,//is fullscreen,full/win
@@ -107,11 +109,7 @@ export default {
         },
         normalize:function(){
             this.isShowTree = true
-        },
-        delc:function(dat){//when child is deleted
-            var i = this.els.map(item => item.id).indexOf(dat.cid)
-            this.els.splice(i,1)
-        },
+        }
     }
 }
 </script>
