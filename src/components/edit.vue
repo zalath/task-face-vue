@@ -55,9 +55,9 @@ export default {
                     if(res.data != 'mis'){
                         req.post('el',{id:res.data}).then((res)=>{
                             if(res.status){
-                                this.el.ct = this.el.ct+1
                                 if(this.el.Child != null)
-                                    this.el.Child.push(res.data)
+                                    this.$bus.emit('create'+this.pid,res.data)
+                                    this.$bus.emit('ct'+this.pid,'1');
                             }
                         })
                     }
@@ -66,7 +66,7 @@ export default {
                 req.post('save',{"id":this.el.id,"title":this.newtitle})
                 .then((res)=>{
                     if(res.data != "mis"){
-                        this.el.title = this.newtitle
+                        this.$bus.emit('change'+this.el.id,this.newtitle)
                     }
                 })
             }

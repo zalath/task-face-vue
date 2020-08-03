@@ -8,18 +8,16 @@
                 <a class="btn btn-danger" v-on:click="close">x</a>
             </div>
         </div>
-        <div v-for="(elc,i) in els" :key="i">
-            <el :el=elc :type="'list'"></el>
-        </div>
+        <tre :els="els" :pid="pid"></tre>
     </div>
 </template>
 <script>
 import req from "../assets/req"
-import el from "./el";
+import tre from "./tre"
 export default {
     name:"win",
     components:{
-        el
+        tre
     },
     props:{
         type: String,//is fullscreen,full/win
@@ -82,7 +80,6 @@ export default {
             })
         },
         show:function(pid){
-            // console.log('show--'+pid)
             if(this.pid == pid){
                 this.zIndex = 2;
                 this.border = "solid 1px white"

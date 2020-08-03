@@ -3,8 +3,8 @@
         <div class="row">
             <button type="button" class="btn btn-primary col-sm-5" data-toggle="modal" :data-target="'#edit'+el.id">{{el.id}}-{{el.title}}</button>
             
-            <span class="showhide btn btn-primary" v-if="isOpen" v-on:click="open('list')">[{{el.ct}}]</span>
-            <span class="showhide btn btn-primary" v-if="isFold" v-on:click="fold()">[-]</span>
+            <span class="showhide btn btn-primary" v-if="isOpen" v-on:click="open('list')">{{el.ct}}</span>
+            <span class="showhide btn btn-primary" v-if="isFold" v-on:click="fold()">-</span>
 
             <template v-if="isOpenWin">
             <span class="showhide btn btn-primary" v-if="isShowWin" v-hammer:tap="openWin">+>></span>
@@ -14,11 +14,6 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
         </div>
-        <template v-if="isShowChild">
-            <div v-for="(elc,i) in el.Child" :key="i">
-                <el :el=elc :type=type></el>
-            </div>
-        </template>
     </div>
 </template>
 <script>
@@ -28,12 +23,10 @@ export default {
     components:{
     },
     props:{
-        type: String,
         el: {},
     },
     data: function(){
         return {
-            isShowChild:false,
             isOpenWin:true,
             isOpen: true,
             isFold: false,
@@ -41,22 +34,38 @@ export default {
         }
     },
     created(){
-        if(this.el.ct == 0){
-            this.isOpen = false;
-            this.isFold = false;
-            this.isOpenWin = false;
-        }
-        //if do not have next level,or is already opened
-        if(this.el.ct > 0 && this.el.Child != null && this.el.Child.length > 0){
-            this.isOpen = false;
-            this.isFold = true;
-        }
+        this.isct()
         if(this.el.Child != null)
-            this.isShowChild = true
-        this.$bus.emit('addhandle',this.el)
-        this.$bus.on('ct',this.ct)
+            this.$bus.emit('showChild'+this.el.id,true)
+        this.$bus.emit('addhandle',this.el)//add handle button
+        this.$bus.on('ct'+this.el.id,this.ct)
+        this.$bus.on('change'+this.el.id,this.change)
+    },
+    computed:{
+        ctwatch:function(){
+            return this.el.ct
+        }
+    },
+    watch:{
+        ctwatch:function(val){
+            if(val > 0){
+                this.isct()
+            }
+        }
     },
     methods:{
+        isct(){
+            if(this.el.ct == 0){
+                this.isOpen = false;
+                this.isFold = false;
+                this.isOpenWin = false;
+            }
+            //if it does not have next level,or is already opened
+            if(this.el.ct > 0 && this.el.Child != null && this.el.Child.length > 0){
+                this.isOpen = false;
+                this.isFold = true;
+            }
+        },
         toMove:function(){
 
         },
@@ -84,15 +93,17 @@ export default {
             this.isShowWin = false
         },
         show(isShowChild,isOpen,isFold){
-            this.isShowChild = isShowChild
+            this.$bus.emit('showChild'+this.el.id,isShowChild)
             this.isOpen = isOpen
             this.isFold = isFold
         },
         ct:function(dat){
-            if(this.el.id == dat.id)
-            if(dat.type =='1')
+            if(dat =='1')
                 this.el.ct +=1;
             else this.el.ct -=1;
+        },
+        change(title){
+            this.el.title = title
         }
     }
 }
