@@ -8,16 +8,22 @@
                 <a class="btn btn-danger" v-on:click="close">x</a>
             </div>
         </div>
-        <tre :els="els" :pid="pid"></tre>
+        <!-- <tre :els="els" :pid="pid"></tre> -->
+        <!-- <hr> -->
+        <template v-for="(el,i) in els">
+            <el :el="el" :key="i"></el>
+        </template>
     </div>
 </template>
 <script>
 import req from "../assets/req"
-import tre from "./tre"
+// import tre from "./tre"
+import el from "./el"
 export default {
     name:"win",
     components:{
-        tre
+        // tre,
+        el
     },
     props:{
         type: String,//is fullscreen,full/win

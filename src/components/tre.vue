@@ -33,10 +33,6 @@ export default {
         showChild(is){
             this.isShowChild = is
         },
-        delc(el){
-            var i = this.els.map(item => item.pid).indexOf(el.id)
-            this.els.splice(i,1);
-        },
         create(el){
             this.els.push(el)
         }

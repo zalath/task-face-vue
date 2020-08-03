@@ -14,6 +14,9 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
         </div>
+        <div v-for="(el,i) in el.Child" :key="i">
+            <el :el="el"></el>
+        </div>
     </div>
 </template>
 <script>
@@ -38,8 +41,13 @@ export default {
         if(this.el.Child != null)
             this.$bus.emit('showChild'+this.el.id,true)
         this.$bus.emit('addhandle',this.el)//add handle button
+        //add
+        this.$bus.on('create'+this.el.id,this.newEl)
         this.$bus.on('ct'+this.el.id,this.ct)
+        //change
         this.$bus.on('change'+this.el.id,this.change)
+        //remove
+        this.$bus.on('delc',this.delc);
     },
     computed:{
         ctwatch:function(){
@@ -104,7 +112,14 @@ export default {
         },
         change(title){
             this.el.title = title
-        }
+        },
+        newEl(dat){
+            
+        },
+        delc(el){
+            var i = this.els.map(item => item.pid).indexOf(el.id)
+            this.els.splice(i,1);
+        },
     }
 }
 </script>
