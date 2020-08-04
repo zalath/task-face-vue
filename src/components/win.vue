@@ -3,26 +3,24 @@
         <div class="winbar d-flex">
             <div class="title p-2 flex-grow-1">{{title}}</div>
             <div v-if="pid != 0" class="barbtns">
-                <a class="btn btn-danger" v-on:click="minimize">_</a>
-                <a class="btn btn-danger" v-on:click="normalize">□</a>
+                <a class="btn btn-danger" v-if="ismined==false" v-on:click="minimize">_</a>
+                <a class="btn btn-danger" v-if="ismined==true" v-on:click="normalize">□</a>
                 <a class="btn btn-danger" v-on:click="close">x</a>
             </div>
         </div>
-        <!-- <tre :els="els" :pid="pid"></tre> -->
-        <!-- <hr> -->
+        <div v-if="isShowTree">
         <template v-for="(el,i) in els">
             <el :el="el" :key="i"></el>
         </template>
+        </div>
     </div>
 </template>
 <script>
 import req from "../assets/req"
-// import tre from "./tre"
 import el from "./el"
 export default {
     name:"win",
     components:{
-        // tre,
         el
     },
     props:{
@@ -60,7 +58,8 @@ export default {
             pozY:10,
             W:50,
             border:"solid 1px red",
-            isShowTree:true
+            isShowTree:true,
+            ismined:false
         }
     },
     created(){
@@ -110,9 +109,11 @@ export default {
         },
         minimize:function(){
             this.isShowTree = false
+            this.ismined = true;
         },
         normalize:function(){
             this.isShowTree = true
+            this.ismined = false;
         },
         newEl:function(el){
             this.els.push(el);

@@ -6,8 +6,8 @@
             <span class="showhide btn btn-primary" v-if="isOpen==true" v-on:click="open('list')">{{el.ct}}</span>
             <span class="showhide btn btn-primary" v-if="isOpen==false" v-on:click="fold()">-</span>
 
-            <span class="showhide btn btn-primary" v-if="isShowWin==true" v-hammer:tap="openWin">+>></span>
-            <span class="showhide btn btn-primary" v-if="isShowWin==false" v-hammer:tap="openWin">>></span>
+            <span class="showhide btn btn-primary" v-if="isShowWin==true" v-hammer:tap="openWin">+></span>
+            <span class="showhide btn btn-primary" v-if="isShowWin==false" v-hammer:tap="openWin">></span>
             
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
@@ -36,7 +36,7 @@ export default {
         }
     },
     created(){
-        this.isct()
+        
         if(this.el.Child != null)
             this.$bus.emit('showChild'+this.el.id,true)
         this.$bus.emit('addhandle',this.el)//add handle button
@@ -45,23 +45,27 @@ export default {
         this.$bus.on('delc'+this.el.id,this.delc)
         this.$bus.on('ct'+this.el.id,this.ct)
         this.$bus.on('closewin',this.closeWin)
+        this.$bus.on('winopened'+this.el.id,this.winOpened)
     },
     computed:{
     },
     watch:{
     },
+    mounted(){
+        this.isct()
+    },
     methods:{
         isct(){
             if(this.el.ct == 0){
-                this.show(false,false,false)
+                this.show(4,4,4)
             }
             //it has child
             if(this.el.ct > 0){
-                this.show(false,true,true)
+                this.show(false,true,false)
             }
             //if it is already opened
             if(this.el.Child != null && this.el.Child.length > 0){
-                this.show(true,false,true)
+                this.show(true,false,false)
             }
         },
         toMove:function(){
@@ -84,22 +88,20 @@ export default {
         },
         openWin:function(e){
             this.show(0,0,true)
-            // this.isShowWin = true
-            this.$bus.on('closewin'+this.el.id,this.closewWin);
             this.$bus.emit('openwin',{type:'win',etype:'list',pid:this.el.id,title:this.el.title,mousepoz:e.center})
+            this.$bus.emit('winopened'+this.el.id)
+        },
+        winOpened:function(){
+            this.show(0,0,true)
         },
         closeWin:function(id){
             if(id == this.el.id)
             this.show(0,0,false)
         },
-        show(isShowChild,isOpen,isOpenWin){
-            // this.$bus.emit('showChild'+this.el.id,isShowChild)
-            if(isShowChild != 0)
-            this.isShowChild = isShowChild
-            if(isOpen != 0)
-            this.isOpen = isOpen
-            if(isOpenWin != 0)
-            this.isOpenWin = isOpenWin
+        show:function(isSC,isO,isSW){
+            if(isSC !== 0)this.isShowChild = isSC
+            if(isO !== 0)this.isOpen = isO
+            if(isSW !== 0)this.isShowWin = isSW
         },
         ct:function(dat){
             if(dat =='1')
