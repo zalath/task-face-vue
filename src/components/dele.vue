@@ -32,7 +32,8 @@ export default {
             req.post('del',{id:this.el.id})
             .then((res)=>{
                 if(res.data != "mis"){
-                    this.$bus.emit('delc',{cid:this.el.id})
+                    this.$bus.emit('delc'+this.el.pid,{cid:this.el.id})
+                    this.$bus.emit('ct'+this.el.pid,'-1')
                 }
             })
         }

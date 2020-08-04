@@ -55,9 +55,8 @@ export default {
                     if(res.data != 'mis'){
                         req.post('el',{id:res.data}).then((res)=>{
                             if(res.status){
-                                if(this.el.Child != null)
-                                    this.$bus.emit('create'+this.pid,res.data)
-                                    this.$bus.emit('ct'+this.pid,'1');
+                                this.$bus.emit('create'+this.pid,res.data)
+                                this.$bus.emit('ct'+this.pid,'1');
                             }
                         })
                     }

@@ -3,19 +3,19 @@
         <div class="row">
             <button type="button" class="btn btn-primary col-sm-5" data-toggle="modal" :data-target="'#edit'+el.id">{{el.id}}-{{el.title}}</button>
             
-            <span class="showhide btn btn-primary" v-if="isOpen" v-on:click="open('list')">{{el.ct}}</span>
-            <span class="showhide btn btn-primary" v-if="isFold" v-on:click="fold()">-</span>
+            <span class="showhide btn btn-primary" v-if="isOpen==true" v-on:click="open('list')">{{el.ct}}</span>
+            <span class="showhide btn btn-primary" v-if="isOpen==false" v-on:click="fold()">-</span>
 
-            <template v-if="isOpenWin">
-            <span class="showhide btn btn-primary" v-if="isShowWin" v-hammer:tap="openWin">+>></span>
-            <span class="showhide btn btn-primary" v-else v-hammer:tap="openWin">>></span>
-            </template>
+            <span class="showhide btn btn-primary" v-if="isShowWin==true" v-hammer:tap="openWin">+>></span>
+            <span class="showhide btn btn-primary" v-if="isShowWin==false" v-hammer:tap="openWin">>></span>
             
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
         </div>
-        <div v-for="(el,i) in el.Child" :key="i">
-            <el :el="el"></el>
+        <div v-if="isShowChild==true">
+            <div v-for="(el,i) in el.Child" :key="i">
+                <el :el="el"></el>
+            </div>
         </div>
     </div>
 </template>
@@ -30,10 +30,9 @@ export default {
     },
     data: function(){
         return {
-            isOpenWin:true,
             isOpen: true,
-            isFold: false,
-            isShowWin:false
+            isShowWin:false,
+            isShowChild:false
         }
     },
     created(){
@@ -41,37 +40,28 @@ export default {
         if(this.el.Child != null)
             this.$bus.emit('showChild'+this.el.id,true)
         this.$bus.emit('addhandle',this.el)//add handle button
-        //add
         this.$bus.on('create'+this.el.id,this.newEl)
-        this.$bus.on('ct'+this.el.id,this.ct)
-        //change
         this.$bus.on('change'+this.el.id,this.change)
-        //remove
-        this.$bus.on('delc',this.delc);
+        this.$bus.on('delc'+this.el.id,this.delc)
+        this.$bus.on('ct'+this.el.id,this.ct)
+        this.$bus.on('closewin',this.closeWin)
     },
     computed:{
-        ctwatch:function(){
-            return this.el.ct
-        }
     },
     watch:{
-        ctwatch:function(val){
-            if(val > 0){
-                this.isct()
-            }
-        }
     },
     methods:{
         isct(){
             if(this.el.ct == 0){
-                this.isOpen = false;
-                this.isFold = false;
-                this.isOpenWin = false;
+                this.show(false,false,false)
             }
-            //if it does not have next level,or is already opened
-            if(this.el.ct > 0 && this.el.Child != null && this.el.Child.length > 0){
-                this.isOpen = false;
-                this.isFold = true;
+            //it has child
+            if(this.el.ct > 0){
+                this.show(false,true,true)
+            }
+            //if it is already opened
+            if(this.el.Child != null && this.el.Child.length > 0){
+                this.show(true,false,true)
             }
         },
         toMove:function(){
@@ -87,38 +77,45 @@ export default {
                     this.el.Child = res.data
                 })
             }
-            this.show(true,false,true)
+            this.show(true,false,0)
         },
         fold:function(){
-            this.show(false,true,false)
+            this.show(false,true,0)
         },
         openWin:function(e){
-            this.isShowWin = true
+            this.show(0,0,true)
+            // this.isShowWin = true
             this.$bus.on('closewin'+this.el.id,this.closewWin);
             this.$bus.emit('openwin',{type:'win',etype:'list',pid:this.el.id,title:this.el.title,mousepoz:e.center})
         },
-        closeWin:function(){
-            this.isShowWin = false
+        closeWin:function(id){
+            if(id == this.el.id)
+            this.show(0,0,false)
         },
-        show(isShowChild,isOpen,isFold){
-            this.$bus.emit('showChild'+this.el.id,isShowChild)
+        show(isShowChild,isOpen,isOpenWin){
+            // this.$bus.emit('showChild'+this.el.id,isShowChild)
+            if(isShowChild != 0)
+            this.isShowChild = isShowChild
+            if(isOpen != 0)
             this.isOpen = isOpen
-            this.isFold = isFold
+            if(isOpenWin != 0)
+            this.isOpenWin = isOpenWin
         },
         ct:function(dat){
             if(dat =='1')
-                this.el.ct +=1;
-            else this.el.ct -=1;
+                this.el.ct +=1
+            else this.el.ct -=1
+            this.isct()
         },
         change(title){
             this.el.title = title
         },
         newEl(dat){
-            
+            this.el.Child.push(dat)
         },
         delc(el){
-            var i = this.els.map(item => item.pid).indexOf(el.id)
-            this.els.splice(i,1);
+            var i = this.el.Child.map(item => item.pid).indexOf(el.id)
+            this.el.Child.splice(i,1)
         },
     }
 }

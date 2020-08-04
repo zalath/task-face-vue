@@ -72,12 +72,13 @@ export default {
         this.Y += 10 * (this.poz -1) + this.mousepoz.y - 20*this.poz
         this.pozX += this.mousepoz.x -60*this.poz
         this.pozY += this.mousepoz.y -20*this.poz
+
+        this.$bus.on('create'+this.pid,this.newEl)
         this.$bus.on('delc'+this.pid,this.delc)
     },
     methods:{
         close:function(){
             this.$bus.emit('closewin',this.pid);
-            this.$bus.emit('closewin'+this.pid);
         },
         loadEls:function(){
             req.post(this.etype,{id:this.pid})
@@ -91,7 +92,7 @@ export default {
                 this.border = "solid 1px white"
                 setTimeout(() => {
                     this.border = "solid 1px red"
-                }, 1000);
+                }, 200);
             }else this.zIndex=1;
         },
         pan:function(e){
@@ -112,6 +113,13 @@ export default {
         },
         normalize:function(){
             this.isShowTree = true
+        },
+        newEl:function(el){
+            this.els.push(el);
+        },
+        delc:function(el){
+            var i = this.els.map(item => item.pid).indexOf(el.id)
+            this.els.splice(i,1);
         }
     }
 }
