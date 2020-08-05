@@ -11,6 +11,9 @@
             
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
+            
+            <button type="button" class="btn btn-warning" v-if="isMoving==false" :click="toMove">&gt;</button>
+            <button type="button" class="btn btn-warning" v-if="isMoving==true" :click="move">&lt;</button>
         </div>
         <div v-if="isShowChild==true">
             <div v-for="(el,i) in el.Child" :key="i">
@@ -32,7 +35,8 @@ export default {
         return {
             isOpen: true,
             isShowWin:false,
-            isShowChild:false
+            isShowChild:false,
+            isMoving:false
         }
     },
     created(){
@@ -46,6 +50,7 @@ export default {
         this.$bus.on('ct'+this.el.id,this.ct)
         this.$bus.on('closewin',this.closeWin)
         this.$bus.on('winopened'+this.el.id,this.winOpened)
+        this.$bus.on('move',this.move);
     },
     computed:{
     },
@@ -69,10 +74,11 @@ export default {
             }
         },
         toMove:function(){
-
+            this.$bus.emit('tomove',this.el.id)
+            this.isMoving = true;
         },
         move:function(){
-
+            this.$bus.emit('move',this.el.id)
         },
         open:function(type){
             if(this.el.Child == null){
