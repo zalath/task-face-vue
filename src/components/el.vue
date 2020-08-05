@@ -12,8 +12,8 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
             
-            <button type="button" class="btn btn-warning" v-if="isMoving==false" :click="toMove">&gt;</button>
-            <button type="button" class="btn btn-warning" v-if="isMoving==true" :click="move">&lt;</button>
+            <button type="button" class="btn btn-warning" v-if="isMoving==false" v-on:click="moveStart()" data-toggle="modal" data-target="#moving">&gt;</button>
+            <button type="button" class="btn btn-warning" v-if="isMoving==true" v-on:click="move()">&lt;</button>
         </div>
         <div v-if="isShowChild==true">
             <div v-for="(el,i) in el.Child" :key="i">
@@ -50,7 +50,9 @@ export default {
         this.$bus.on('ct'+this.el.id,this.ct)
         this.$bus.on('closewin',this.closeWin)
         this.$bus.on('winopened'+this.el.id,this.winOpened)
-        this.$bus.on('move',this.move);
+        this.$bus.on('tomove',this.toMove)
+        this.$bus.on('moved',this.moved)
+        this.$bus.on('movecancel',this.moveCancel)
     },
     computed:{
     },
@@ -73,12 +75,27 @@ export default {
                 this.show(true,false,false)
             }
         },
-        toMove:function(){
-            this.$bus.emit('tomove',this.el.id)
-            this.isMoving = true;
+        moveStart:function(){
+            this.$bus.emit('tomove',this.el)
         },
-        move:function(){
+        toMove:function(el){
+            this.isMoving = true
+            if(this.el.id == el.id){
+                this.isMoving = 4
+            }
+        },
+        move(){
             this.$bus.emit('move',this.el.id)
+        },
+        moved:function(dat){
+            if(this.el.id == dat.npid){
+                dat.el.pid = this.el.id
+                this.el.Child.push(dat.el);
+            }
+            this.isMoving = false
+        },
+        moveCancel(){
+            this.isMoving = false
         },
         open:function(type){
             if(this.el.Child == null){
@@ -122,7 +139,7 @@ export default {
             this.el.Child.push(dat)
         },
         delc(el){
-            var i = this.el.Child.map(item => item.pid).indexOf(el.id)
+            var i = this.el.Child.map(item => item.id).indexOf(el.id)
             this.el.Child.splice(i,1)
         },
     }

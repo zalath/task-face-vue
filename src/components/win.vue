@@ -119,7 +119,7 @@ export default {
             this.els.push(el);
         },
         delc:function(el){
-            var i = this.els.map(item => item.pid).indexOf(el.id)
+            var i = this.els.map(item => item.id).indexOf(el.id)
             this.els.splice(i,1);
         }
     }

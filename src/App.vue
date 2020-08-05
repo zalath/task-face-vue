@@ -7,6 +7,7 @@
       <edit :pid=h.id :el=h :type="'new'"></edit>
       <dele :el=h ></dele>
     </div>
+    <move></move>
   </div>
 </template>
 
@@ -14,13 +15,15 @@
 import win from "./components/win"
 import edit from "./components/edit"
 import dele from "./components/dele"
+import move from "./components/move"
 
 export default {
   name: 'App',
   components: {
     win,
     edit,
-    dele
+    dele,
+    move
   },
   data:function(){
     return {
