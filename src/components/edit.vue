@@ -56,7 +56,6 @@ export default {
                         req.post('el',{id:res.data}).then((res)=>{
                             if(res.status){
                                 this.$bus.emit('create'+this.pid,res.data)
-                                this.$bus.emit('ct'+this.pid,'1');
                             }
                         })
                     }

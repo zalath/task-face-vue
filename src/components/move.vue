@@ -37,9 +37,12 @@ export default {
         moved:function(pid){
             req.post('move',{id:this.el.id,npid:pid})
             .then((res)=>{
-                if (res == 'done'){
+                if (res.data == 'done'){
+                    console.log('---------------------------------')
+                    console.log('moved:'+pid+'<-'+this.el.id)
                     this.$bus.emit('moved',{npid:pid,el:this.el})
-                    this.$bus.emit('delc'+this.el.pid,this.el)
+                }else{
+                    this.$bus.emit('movecancel')
                 }
             })
         },

@@ -16,7 +16,7 @@
             <button type="button" class="btn btn-warning" v-if="isMoving==true" v-on:click="move()">&lt;</button>
         </div>
         <div v-if="isShowChild==true">
-            <div v-for="(el,i) in el.Child" :key="i">
+            <div v-for="(el) in el.Child" :key="el.id">
                 <el :el="el"></el>
             </div>
         </div>
@@ -40,14 +40,12 @@ export default {
         }
     },
     created(){
-        
         if(this.el.Child != null)
             this.$bus.emit('showChild'+this.el.id,true)
         this.$bus.emit('addhandle',this.el)//add handle button
         this.$bus.on('create'+this.el.id,this.newEl)
         this.$bus.on('change'+this.el.id,this.change)
         this.$bus.on('delc'+this.el.id,this.delc)
-        this.$bus.on('ct'+this.el.id,this.ct)
         this.$bus.on('closewin',this.closeWin)
         this.$bus.on('winopened'+this.el.id,this.winOpened)
         this.$bus.on('tomove',this.toMove)
@@ -66,13 +64,8 @@ export default {
             if(this.el.ct == 0){
                 this.show(4,4,4)
             }
-            //it has child
             if(this.el.ct > 0){
                 this.show(false,true,false)
-            }
-            //if it is already opened
-            if(this.el.Child != null && this.el.Child.length > 0){
-                this.show(true,false,false)
             }
         },
         moveStart:function(){
@@ -89,8 +82,16 @@ export default {
         },
         moved:function(dat){
             if(this.el.id == dat.npid){
-                dat.el.pid = this.el.id
-                this.el.Child.push(dat.el);
+                this.ct("1")
+                console.log('el-add:'+this.el.pid+'++'+dat.el.id)
+                if(this.el.Child != null){
+                    dat.el.pid = this.el.id
+                    this.el.Child.push(dat.el)
+                }
+            }
+            if(this.el.id == dat.el.pid){
+                console.log('el-remove:'+this.el.pid+'--'+dat.el.id)
+                this.delc(dat.el)
             }
             this.isMoving = false
         },
@@ -136,11 +137,15 @@ export default {
             this.el.title = title
         },
         newEl(dat){
+            this.ct("1")
             this.el.Child.push(dat)
         },
         delc(el){
-            var i = this.el.Child.map(item => item.id).indexOf(el.id)
-            this.el.Child.splice(i,1)
+            this.ct("-1")
+            if(this.el.Child != null){
+                var i = this.el.Child.map(item => item.id).indexOf(el.id)
+                this.el.Child.splice(i,1)
+            }
         },
     }
 }

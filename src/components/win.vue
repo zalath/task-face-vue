@@ -9,8 +9,8 @@
             </div>
         </div>
         <div v-if="isShowTree">
-        <template v-for="(el,i) in els">
-            <el :el="el" :key="i"></el>
+        <template v-for="(el) in els">
+            <el :el="el" :key="'w'+el.id"></el>
         </template>
         </div>
     </div>
@@ -74,6 +74,7 @@ export default {
 
         this.$bus.on('create'+this.pid,this.newEl)
         this.$bus.on('delc'+this.pid,this.delc)
+        this.$bus.on('moved',this.moved)
     },
     methods:{
         close:function(){
@@ -109,18 +110,29 @@ export default {
         },
         minimize:function(){
             this.isShowTree = false
-            this.ismined = true;
+            this.ismined = true
         },
         normalize:function(){
             this.isShowTree = true
-            this.ismined = false;
+            this.ismined = false
         },
         newEl:function(el){
-            this.els.push(el);
+            this.els.push(el)
         },
         delc:function(el){
             var i = this.els.map(item => item.id).indexOf(el.id)
-            this.els.splice(i,1);
+            this.els.splice(i,1)
+        },
+        moved:function(dat){
+            if(dat.npid == this.pid){
+                console.log('win-add:'+this.pid+'++'+dat.el.id)
+                this.els.push(dat.el)
+            }
+            if(dat.el.pid == this.pid){
+                console.log('win-remove:'+this.pid+'--'+dat.el.id)
+                var i = this.els.map(item => item.id).indexOf(dat.el.id)
+                this.els.splice(i,1)
+            }
         }
     }
 }
