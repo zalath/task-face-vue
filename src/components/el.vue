@@ -12,7 +12,7 @@
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
             
-            <button type="button" class="btn btn-warning" v-if="isMoving==false" v-on:click="moveStart()" data-toggle="modal" data-target="#moving">&gt;</button>
+            <button type="button" class="btn btn-warning" v-if="isMoving==false" v-hammer:tap="moveStart" data-toggle="modal" data-target="#moving">&gt;</button>
             <button type="button" class="btn btn-warning" v-if="isMoving==true" v-on:click="move()">&lt;</button>
         </div>
         <div v-if="isShowChild==true">
@@ -68,12 +68,12 @@ export default {
                 this.show(false,true,false)
             }
         },
-        moveStart:function(){
-            this.$bus.emit('tomove',this.el)
+        moveStart:function(e){
+            this.$bus.emit('tomove',{el:this.el,e:e})
         },
-        toMove:function(el){
+        toMove:function(dat){
             this.isMoving = true
-            if(this.el.id == el.id){
+            if(this.el.id == dat.el.id){
                 this.isMoving = 4
             }
         },
@@ -83,14 +83,14 @@ export default {
         moved:function(dat){
             if(this.el.id == dat.npid){
                 this.ct("1")
-                console.log('el-add:'+this.el.pid+'++'+dat.el.id)
+                console.log('el-add:'+this.el.id+'++'+dat.el.id+'>'+dat.el.pid)
                 if(this.el.Child != null){
                     dat.el.pid = this.el.id
                     this.el.Child.push(dat.el)
                 }
             }
             if(this.el.id == dat.el.pid){
-                console.log('el-remove:'+this.el.pid+'--'+dat.el.id)
+                console.log('el-remove:'+this.el.id+'--'+dat.el.id+'>'+dat.el.pid)
                 this.delc(dat.el)
             }
             this.isMoving = false

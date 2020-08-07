@@ -1,19 +1,13 @@
 <template>
-    <div class="modal fade" id="moving" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel">Moving</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <!-- <div class="modal-body">
-                </div> -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-danger" data-dismiss="modal" v-on:click="cancel()">Cancel</button>
-                </div>
+    <div class="window win container" :style="style" v-hammer:pan="pan" v-hammer:panend="panend">
+        <div class="winbar d-flex">
+            <div class="title p-2 flex-grow-1">Moving</div>
+            <div class="barbtns">
+                <a class="btn btn-danger" v-on:click="cancel()">x</a>
             </div>
+        </div>
+        <div>
+            <a class="btn btn-danger" v-on:click="cancel()">cancel</a>
         </div>
     </div>
 </template>
@@ -24,15 +18,39 @@ export default {
     data:function(){
         return{
             el:'',
+            X:10,
+            Y:10,
+            zIndex:3,
+            pozX:10,
+            pozY:10,
+            W:150+'px',
+            border:"solid 1px red",
+            display:'none',
+            mousepoz:{x:0,y:0}
+        }
+    },
+    computed:{
+        style(){
+            return {left:this.X+"px",display:this.display,top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border}
         }
     },
     created(){
+
         this.$bus.on('tomove',this.moving)
         this.$bus.on('move',this.moved)
     },
     methods:{
-        moving:function(el){
-            this.el = el
+        moving:function(dat){
+            this.mousepoz = dat.e.center
+            this.setpoz()
+            this.display = 'block';
+            this.el =  JSON.parse(JSON.stringify(dat.el))
+        },
+        setpoz:function(){
+            this.X = this.mousepoz.x
+            this.Y = this.mousepoz.y
+            this.pozX = this.mousepoz.x
+            this.pozY = this.mousepoz.y
         },
         moved:function(pid){
             req.post('move',{id:this.el.id,npid:pid})
@@ -40,6 +58,7 @@ export default {
                 if (res.data == 'done'){
                     console.log('---------------------------------')
                     console.log('moved:'+pid+'<-'+this.el.id)
+                    this.display = 'none'
                     this.$bus.emit('moved',{npid:pid,el:this.el})
                 }else{
                     this.$bus.emit('movecancel')
@@ -49,16 +68,40 @@ export default {
         cancel(){
             this.$bus.emit('movecancel')
             this.el = ''
-        }
+            this.display = 'none'
+        },
+        pan:function(e){
+            if(this.pid != 0){
+                this.Y = this.pozY + e.deltaY
+                this.X = this.pozX + e.deltaX
+            }
+        },
+        panend:function(){
+            this.pozX = this.X
+            this.pozY = this.Y
+        },
     }
 }
 </script>
 <style scoped>
-.modal{
-    color:black;
+.window{
+    background-color:black;
+    color:white;
+    opacity: 0.9;
 }
-.modal-backdrop {
-    opacity: 0 !important;
-    filter: alpha(opacity=0) !important;
+.win{
+    position: absolute;
+    /* width:50%; */
+}
+.winbar{
+    width:100% !important;
+    background-color:black;
+    cursor:pointer;
+}
+.title{
+    color:white;
+}
+.barbtns{
+    margin-right:-15px;
 }
 </style>

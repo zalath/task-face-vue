@@ -125,11 +125,11 @@ export default {
         },
         moved:function(dat){
             if(dat.npid == this.pid){
-                console.log('win-add:'+this.pid+'++'+dat.el.id)
+                console.log('win-add:'+this.pid+'++'+dat.el.id+'>'+dat.el.pid)
                 this.els.push(dat.el)
             }
             if(dat.el.pid == this.pid){
-                console.log('win-remove:'+this.pid+'--'+dat.el.id)
+                console.log('win-remove:'+this.pid+'--'+dat.el.id+'>'+dat.el.pid)
                 var i = this.els.map(item => item.id).indexOf(dat.el.id)
                 this.els.splice(i,1)
             }
