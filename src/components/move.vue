@@ -44,7 +44,7 @@ export default {
             this.mousepoz = dat.e.center
             this.setpoz()
             this.display = 'block';
-            this.el =  JSON.parse(JSON.stringify(dat.el))
+            this.el =  dat.el
         },
         setpoz:function(){
             this.X = this.mousepoz.x
@@ -56,10 +56,10 @@ export default {
             req.post('move',{id:this.el.id,npid:pid})
             .then((res)=>{
                 if (res.data == 'done'){
-                    console.log('---------------------------------')
-                    console.log('moved:'+pid+'<-'+this.el.id)
                     this.display = 'none'
-                    this.$bus.emit('moved',{npid:pid,el:this.el})
+                    var oldpid = this.el.pid
+                    this.el.pid = pid
+                    this.$bus.emit('moved',{npid:pid,el:this.el,opid:oldpid})
                 }else{
                     this.$bus.emit('movecancel')
                 }

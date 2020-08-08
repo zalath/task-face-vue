@@ -77,6 +77,22 @@ export default {
         this.$bus.on('moved',this.moved)
     },
     methods:{
+        newEl:function(el){
+            this.els.push(el)
+        },
+        delc:function(el){
+            var i = this.els.map(item => item.id).indexOf(el.id)
+            this.els.splice(i,1)
+        },
+        moved:function(dat){
+            if(dat.npid == this.pid){
+                this.els.push(dat.el)
+            }
+            if(dat.opid == this.pid){
+                var i = this.els.map(item => item.id).indexOf(dat.el.id)
+                this.els.splice(i,1)
+            }
+        },
         close:function(){
             this.$bus.emit('closewin',this.pid);
         },
@@ -115,24 +131,6 @@ export default {
         normalize:function(){
             this.isShowTree = true
             this.ismined = false
-        },
-        newEl:function(el){
-            this.els.push(el)
-        },
-        delc:function(el){
-            var i = this.els.map(item => item.id).indexOf(el.id)
-            this.els.splice(i,1)
-        },
-        moved:function(dat){
-            if(dat.npid == this.pid){
-                console.log('win-add:'+this.pid+'++'+dat.el.id+'>'+dat.el.pid)
-                this.els.push(dat.el)
-            }
-            if(dat.el.pid == this.pid){
-                console.log('win-remove:'+this.pid+'--'+dat.el.id+'>'+dat.el.pid)
-                var i = this.els.map(item => item.id).indexOf(dat.el.id)
-                this.els.splice(i,1)
-            }
         }
     }
 }

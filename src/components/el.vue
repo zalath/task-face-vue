@@ -16,7 +16,7 @@
             <button type="button" class="btn btn-warning" v-if="isMoving==true" v-on:click="move()">&lt;</button>
         </div>
         <div v-if="isShowChild==true">
-            <div v-for="(el) in el.Child" :key="el.id">
+            <div v-for="(el) in el.Child" :key="'child'+el.id">
                 <el :el="el"></el>
             </div>
         </div>
@@ -52,9 +52,8 @@ export default {
         this.$bus.on('moved',this.moved)
         this.$bus.on('movecancel',this.moveCancel)
     },
-    computed:{
-    },
-    watch:{
+    beforeDestroy(){
+        this.$bus.off('moved',this.moved)
     },
     mounted(){
         this.isct()
@@ -69,7 +68,8 @@ export default {
             }
         },
         moveStart:function(e){
-            this.$bus.emit('tomove',{el:this.el,e:e})
+            var nowel = this.el
+            this.$bus.emit('tomove',{el:nowel,e:e})
         },
         toMove:function(dat){
             this.isMoving = true
@@ -83,14 +83,11 @@ export default {
         moved:function(dat){
             if(this.el.id == dat.npid){
                 this.ct("1")
-                console.log('el-add:'+this.el.id+'++'+dat.el.id+'>'+dat.el.pid)
                 if(this.el.Child != null){
-                    dat.el.pid = this.el.id
                     this.el.Child.push(dat.el)
                 }
             }
-            if(this.el.id == dat.el.pid){
-                console.log('el-remove:'+this.el.id+'--'+dat.el.id+'>'+dat.el.pid)
+            if(this.el.id == dat.opid){
                 this.delc(dat.el)
             }
             this.isMoving = false
