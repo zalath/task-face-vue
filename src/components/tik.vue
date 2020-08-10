@@ -1,13 +1,16 @@
 <template>
-    <div class="window win container" :style="style" v-hammer:pan="pan" v-hammer:panend="panend">
+    <div class="window win container-fluid" :style="style" v-hammer:pan="pan" v-hammer:panend="panend">
         <div class="winbar d-flex">
-            <div class="title p-2 flex-grow-1">Moving</div>
+            <!-- <div class="title p-2 flex-grow-1"></div> -->
             <div class="barbtns">
+                <a class="btn btn-primary tik" style="background-color:lightgray" v-on:click="tik(0)"></a>
+                <a class="btn btn-primary tik" style="background-color:green" v-on:click="tik(1)"></a>
+                <a class="btn btn-primary tik" style="background-color:red" v-on:click="tik(2)"></a>
                 <a class="btn btn-danger" v-on:click="cancel()">x</a>
             </div>
         </div>
         <div>
-            <a class="btn btn-danger" v-on:click="cancel()">cancel</a>
+            <!-- body -->
         </div>
     </div>
 </template>
@@ -23,7 +26,7 @@ export default {
             zIndex:3,
             pozX:10,
             pozY:10,
-            W:150+'px',
+            W:250+'px',
             border:"solid 1px red",
             display:'none',
             mousepoz:{x:0,y:0}
@@ -35,16 +38,14 @@ export default {
         }
     },
     created(){
-
-        this.$bus.on('tomove',this.moving)
-        this.$bus.on('move',this.moved)
+        this.$bus.on('totik',this.totik)
     },
     methods:{
-        moving:function(dat){
+        totik:function(dat){
+            this.el = dat.el
+            this.display = 'block'
             this.mousepoz = dat.e.center
             this.setpoz()
-            this.display = 'block';
-            this.el =  JSON.parse(JSON.stringify(dat.el))
         },
         setpoz:function(){
             this.X = this.mousepoz.x
@@ -52,16 +53,14 @@ export default {
             this.pozX = this.mousepoz.x
             this.pozY = this.mousepoz.y
         },
-        moved:function(pid){
-            req.post('move',{id:this.el.id,npid:pid})
+        tik:function(tik){
+            req.post('tik',{id:this.el.id,tik:tik})
             .then((res)=>{
                 if (res.data == 'done'){
-                    console.log('---------------------------------')
-                    console.log('moved:'+pid+'<-'+this.el.id)
                     this.display = 'none'
-                    this.$bus.emit('moved',{npid:pid,el:this.el})
+                    this.$bus.emit('tik'+this.el.id,tik)
                 }else{
-                    this.$bus.emit('movecancel')
+                    this.display = 'none'
                 }
             })
         },
@@ -91,12 +90,17 @@ export default {
 }
 .win{
     position: absolute;
+    padding:0px;
     /* width:50%; */
 }
 .winbar{
     width:100% !important;
     background-color:black;
     cursor:pointer;
+}
+.barbtns a{
+    height:37px;
+    width:62px;
 }
 .title{
     color:white;

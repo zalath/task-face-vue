@@ -1,6 +1,7 @@
 <template>
     <div class="line container">
         <div class="row">
+            <a class="btn btn-primary tik" :style="tikstyle" v-hammer:tap="toTik"></a>
             <button type="button" class="btn btn-primary col-sm-5" data-toggle="modal" :data-target="'#edit'+el.id">{{el.id}}-{{el.title}}</button>
             
             <span class="showhide btn btn-primary" v-if="isOpen==true" v-on:click="open('list')">{{el.ct}}</span>
@@ -36,7 +37,8 @@ export default {
             isOpen: true,
             isShowWin:false,
             isShowChild:false,
-            isMoving:false
+            isMoving:false,
+            tik:""
         }
     },
     created(){
@@ -51,6 +53,21 @@ export default {
         this.$bus.on('tomove',this.toMove)
         this.$bus.on('moved',this.moved)
         this.$bus.on('movecancel',this.moveCancel)
+        this.$bus.on('tik'+this.el.id,this.tikk)
+    },
+    computed:{
+        tikstyle(){
+            switch(this.el.tik){
+                case 0:
+                    return {backgroundColor:"lightgray"}
+                case 1:
+                    return {backgroundColor:"green"}
+                case 2:
+                    return {backgroundColor:"red"}
+                default:
+                    return {backgroundColor:"white"}
+            }
+        }
     },
     beforeDestroy(){
         this.$bus.off('moved',this.moved)
@@ -59,6 +76,12 @@ export default {
         this.isct()
     },
     methods:{
+        toTik(e){
+            this.$bus.emit('totik',{el:this.el,e:e})
+        },
+        tikk(tik){
+            this.el.tik = tik
+        },
         isct(){
             if(this.el.ct == 0){
                 this.show(4,4,4)
