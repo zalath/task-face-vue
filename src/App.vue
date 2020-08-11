@@ -72,9 +72,14 @@ export default {
 }
 body{
   background-color:black;
-  overflow: hidden;
+  overflow:hidden;
 }
 .btn{
     border-radius:0px !important;
+    background-color:rgba(255,255,255,0) !important;
+    border:none !important;
+}
+.btn:hover{
+  background-color:rgba(255,255,255,0.4) !important;
 }
 </style>

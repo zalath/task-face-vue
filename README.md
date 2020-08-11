@@ -32,3 +32,4 @@
     - change window's open effect to layer popup
 - problem
     - when move started, new open elements can't react, use vuex.
+    - cannot move into root level

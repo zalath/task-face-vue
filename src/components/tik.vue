@@ -3,9 +3,9 @@
         <div class="winbar d-flex">
             <!-- <div class="title p-2 flex-grow-1"></div> -->
             <div class="barbtns">
-                <a class="btn btn-primary tik" style="background-color:lightgray" v-on:click="tik(0)"></a>
-                <a class="btn btn-primary tik" style="background-color:green" v-on:click="tik(1)"></a>
-                <a class="btn btn-primary tik" style="background-color:red" v-on:click="tik(2)"></a>
+                <a class="btn btn-primary tik" style="background-color:lightgray !important" v-on:click="tik(0)"></a>
+                <a class="btn btn-primary tik" style="background-color:green !important" v-on:click="tik(1)"></a>
+                <a class="btn btn-primary tik" style="background-color:red !important" v-on:click="tik(2)"></a>
                 <a class="btn btn-danger" v-on:click="cancel()">x</a>
             </div>
         </div>

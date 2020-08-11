@@ -47,7 +47,7 @@ export default {
             return "window "+this.type+" "+c;
         },
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W+'%',border:this.border}
+            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W+'%',border:this.border,overflow:"scroll"}
         }
     },
     data: function(){
@@ -59,7 +59,7 @@ export default {
             pozX:0,
             pozY:0,
             W:50,
-            border:"solid 1px red",
+            // border:"none",//"solid 1px red",
             isShowTree:true,
             ismined:false
         }
@@ -110,10 +110,10 @@ export default {
         show:function(pid){
             if(this.pid == pid){
                 this.zIndex = 2;
-                this.border = "solid 1px white"
-                setTimeout(() => {
-                    this.border = "solid 1px red"
-                }, 200);
+                // this.border = "solid 1px white"
+                // setTimeout(() => {
+                    // this.border = "solid 1px red"
+                // }, 200);
             }else this.zIndex=1;
         },
         pan:function(e){

@@ -1,20 +1,23 @@
 <template>
     <div class="line container">
         <div class="row">
-            <a class="btn btn-primary tik" :style="tikstyle" v-hammer:tap="toTik"></a>
-            <button type="button" class="btn btn-primary col-sm-5" data-toggle="modal" :data-target="'#edit'+el.id">{{el.id}}-{{el.title}}</button>
+            <a class="btn btn-primary" v-hammer:tap="toTik">
+                <div class="tik" :style="tikstyle"></div>
+            </a>
+            <a type="button" class="btn btn-primary col-sm-9 el" data-toggle="modal" :data-target="'#edit'+el.id">{{el.id}}-{{el.title}}</a>
             
             <span class="showhide btn btn-primary" v-if="isOpen==true" v-on:click="open('list')">{{el.ct}}</span>
             <span class="showhide btn btn-primary" v-if="isOpen==false" v-on:click="fold()">-</span>
 
             <span class="showhide btn btn-primary" v-if="isShowWin==true" v-hammer:tap="openWin">+></span>
             <span class="showhide btn btn-primary" v-if="isShowWin==false" v-hammer:tap="openWin">></span>
-            
+            <div>
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
             
-            <button type="button" class="btn btn-warning" v-if="isMoving==false" v-hammer:tap="moveStart" data-toggle="modal" data-target="#moving">&gt;</button>
-            <button type="button" class="btn btn-warning" v-if="isMoving==true" v-on:click="move()">&lt;</button>
+            <button type="button" class="btn btn-primary" v-if="isMoving==false" v-hammer:tap="moveStart" data-toggle="modal" data-target="#moving">&gt;</button>
+            <button type="button" class="btn btn-primary" v-if="isMoving==true" v-on:click="move()">&lt;</button>
+            </div>
         </div>
         <div v-if="isShowChild==true">
             <div v-for="(el) in el.Child" :key="'child'+el.id">
@@ -59,13 +62,13 @@ export default {
         tikstyle(){
             switch(this.el.tik){
                 case 0:
-                    return {backgroundColor:"lightgray"}
+                    return {backgroundColor:"lightgray !important"}
                 case 1:
-                    return {backgroundColor:"green"}
+                    return {backgroundColor:"green !important"}
                 case 2:
-                    return {backgroundColor:"red"}
+                    return {backgroundColor:"red !important"}
                 default:
-                    return {backgroundColor:"white"}
+                    return {backgroundColor:"white !important"}
             }
         }
     },
@@ -173,9 +176,21 @@ export default {
 <style scoped>
 .line{
     text-align:left;
-    margin:10px 40px;
+    margin:10px 10px;
 }
 .showhide{
     cursor: pointer;
+}
+.el{
+    text-align: left;
+}
+.tik{
+    height:12px;
+    width:12px;
+    border-radius:6px;
+    margin-top:7px;
+}
+.line:hover{
+    background-color: rgba(255, 255, 255, 0.2) !important;
 }
 </style>

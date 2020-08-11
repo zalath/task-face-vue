@@ -59,7 +59,7 @@ export default {
                     console.log('---------------------------------')
                     console.log('moved:'+pid+'<-'+this.el.id)
                     this.display = 'none'
-                    this.$bus.emit('moved',{npid:pid,el:this.el})
+                    this.$bus.emit('moved',{npid:pid,el:this.el,opid:this.el.pid})
                 }else{
                     this.$bus.emit('movecancel')
                 }
