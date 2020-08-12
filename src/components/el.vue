@@ -1,23 +1,23 @@
 <template>
-    <div class="line container">
+    <div class="line container" v-on:mouseover="showbtn(1)" v-on:mouseout="showbtn(0)">
         <div class="row">
             <a class="btn btn-primary" v-hammer:tap="toTik">
                 <div class="tik" :style="tikstyle"></div>
             </a>
-            <a type="button" class="btn btn-primary col-sm-9 el" data-toggle="modal" :data-target="'#edit'+el.id">{{el.id}}-{{el.title}}</a>
+            <a type="button" class="btn btn-primary col-sm-9 el" data-toggle="modal" :data-target="'#edit'+el.id"><!--{{el.id}}-->{{el.title}}</a>
             
             <span class="showhide btn btn-primary" v-if="isOpen==true" v-on:click="open('list')">{{el.ct}}</span>
             <span class="showhide btn btn-primary" v-if="isOpen==false" v-on:click="fold()">-</span>
 
             <span class="showhide btn btn-primary" v-if="isShowWin==true" v-hammer:tap="openWin">+></span>
             <span class="showhide btn btn-primary" v-if="isShowWin==false" v-hammer:tap="openWin">></span>
-            <div>
+            <div :style="btnstyle">
             <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button>
             <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
             
             <button type="button" class="btn btn-primary" v-if="isMoving==false" v-hammer:tap="moveStart" data-toggle="modal" data-target="#moving">&gt;</button>
-            <button type="button" class="btn btn-primary" v-if="isMoving==true" v-on:click="move()">&lt;</button>
             </div>
+            <button type="button" class="btn btn-primary" v-if="isMoving==true" v-on:click="move()">&lt;</button>
         </div>
         <div v-if="isShowChild==true">
             <div v-for="(el) in el.Child" :key="'child'+el.id">
@@ -41,7 +41,8 @@ export default {
             isShowWin:false,
             isShowChild:false,
             isMoving:false,
-            tik:""
+            tik:"",
+            btnstyle:"display:none"
         }
     },
     created(){
@@ -61,9 +62,9 @@ export default {
     computed:{
         tikstyle(){
             switch(this.el.tik){
-                case 0:
-                    return {backgroundColor:"lightgray !important"}
                 case 1:
+                    return {backgroundColor:"lightgray !important"}
+                case 0:
                     return {backgroundColor:"green !important"}
                 case 2:
                     return {backgroundColor:"red !important"}
@@ -91,6 +92,9 @@ export default {
             }
             if(this.el.ct > 0){
                 this.show(false,true,false)
+            }
+            if(this.el.ct > 0 && this.el.Child != null && this.isSC == true){
+                this.show(true,true,false)
             }
         },
         moveStart:function(e){
@@ -170,6 +174,13 @@ export default {
                 this.el.Child.splice(i,1)
             }
         },
+        showbtn(v){
+            if(v == 1 && this.isMoving==false){
+                this.btnstyle = 'display:block'
+            }else{
+                this.btnstyle = 'display:none'
+            }
+        }
     }
 }
 </script>

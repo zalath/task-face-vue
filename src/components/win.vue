@@ -47,7 +47,7 @@ export default {
             return "window "+this.type+" "+c;
         },
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W+'%',border:this.border,overflow:"scroll"}
+            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W+'%',border:this.border,overflow:"auto"}
         }
     },
     data: function(){
