@@ -65,15 +65,12 @@ export default {
             })
         },
         cancel(){
-            this.$bus.emit('movecancel')
             this.el = ''
             this.display = 'none'
         },
         pan:function(e){
-            if(this.pid != 0){
-                this.Y = this.pozY + e.deltaY
-                this.X = this.pozX + e.deltaX
-            }
+            this.Y = this.pozY + e.deltaY
+            this.X = this.pozX + e.deltaX
         },
         panend:function(){
             this.pozX = this.X

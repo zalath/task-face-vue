@@ -3,7 +3,7 @@
         <div class="winbar d-flex">
             <div class="title p-2 flex-grow-1">{{title}}</div>
             <div class="barbtns">
-                <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+this.pid">+</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" v-hammer:tap="createEl">+</button>
             </div>
             <div v-if="pid != 0" class="barbtns">
                 <a class="btn btn-danger" v-if="ismined==false" v-on:click="minimize">_</a>
@@ -47,7 +47,7 @@ export default {
             return "window "+this.type+" "+c;
         },
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W+'%',border:this.border,overflow:"auto"}
+            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border,overflow:"auto",filter:"blur("+this.blur+"px)"}
         }
     },
     data: function(){
@@ -58,24 +58,29 @@ export default {
             zIndex:1,
             pozX:0,
             pozY:0,
-            W:50,
+            W:"",
             // border:"none",//"solid 1px red",
             isShowTree:true,
-            ismined:false
+            ismined:false,
+            blur:0
         }
     },
     created(){
         this.loadEls()
         this.$bus.on('showwin',this.show)
         this.$bus.emit('showwin',this.pid)
-        if(this.type == 'full')this.W = 100
+        if(this.type == 'full')this.W = 100+"%"
         if(this.pid != 0)this.setpoz()
 
         this.$bus.on('create'+this.pid,this.newEl)
         this.$bus.on('delc'+this.pid,this.delc)
         this.$bus.on('moved',this.moved)
+        this.$bus.on('blur',this.setBlur)
     },
     methods:{
+        setBlur:function(val){
+            this.blur = val
+        },
         newEl:function(el){
             this.els.push(el)
         },
@@ -85,6 +90,15 @@ export default {
         },
         setpoz:function(){
             this.X +=  this.mousepoz.x - 60
+            if(this.type != 'full'){
+                this.W = document.body.clientWidth/2;
+                if(document.body.clientWidth < (this.X+this.W)){
+                    this.X = document.body.clientWidth-this.W;
+                    this.pozX = this.X
+                }
+                this.W = this.W + 'px';
+            }
+
             this.Y +=  this.mousepoz.y - 20
             this.pozX += this.mousepoz.x -60
             this.pozY += this.mousepoz.y -20
@@ -136,6 +150,9 @@ export default {
         normalize:function(){
             this.isShowTree = true
             this.ismined = false
+        },
+        createEl:function(e){
+            this.$bus.emit('newEl'+this.pid,{e:e});
         }
     }
 }

@@ -2,7 +2,7 @@
   <div id="app">
     <!-- <img alt="Vue logo" src="./assets/logo.png"> -->
     <win v-for="(w) in wins" :key="'win'+w.pid" :type=w.type :pid=w.pid :etype=w.etype :title=w.title :mousepoz=w.mousepoz></win>
-    <edit :pid="0" :el="{id:0}" :type="'new'"></edit>
+    <edit :pid="0" :el="{id:0,cmt:''}" :type="'new'"></edit>
     <div v-for="(h,j) in handles" :key="'handle'+j">
       <edit :pid=h.pid :el=h :type="'edit'"></edit>
       <edit :pid=h.id :el=h :type="'new'"></edit>
