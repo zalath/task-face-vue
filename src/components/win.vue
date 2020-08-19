@@ -1,5 +1,5 @@
 <template>
-    <div :class=wintype :style=style v-hammer:pan="pan" v-hammer:panend="panend" v-hammer:tap="tap">
+    <div :id="divid" :class=wintype :style=style v-hammer:pan="pan" v-hammer:panend="panend" v-hammer:tap="tap">
         <div class="winbar d-flex">
             <div class="title p-2 flex-grow-1">{{title}}</div>
             <div class="barbtns">
@@ -20,6 +20,7 @@
 </template>
 <script>
 import req from "../assets/req"
+import poz from '../assets/poz'
 import el from "./el"
 export default {
     name:"win",
@@ -62,7 +63,8 @@ export default {
             // border:"none",//"solid 1px red",
             isShowTree:true,
             ismined:false,
-            blur:0
+            blur:0,
+            divid:""
         }
     },
     created(){
@@ -71,6 +73,7 @@ export default {
         this.$bus.emit('showwin',this.pid)
         if(this.type == 'full')this.W = 100+"%"
         if(this.pid != 0)this.setpoz()
+        else this.divid = 'masterdiv'
 
         this.$bus.on('create'+this.pid,this.newEl)
         this.$bus.on('delc'+this.pid,this.delc)
@@ -89,19 +92,14 @@ export default {
             this.els.splice(i,1)
         },
         setpoz:function(){
-            this.X +=  this.mousepoz.x - 60
+            this.X +=  this.mousepoz.x
             if(this.type != 'full'){
                 this.W = document.body.clientWidth/2;
-                if(document.body.clientWidth < (this.X+this.W)){
-                    this.X = document.body.clientWidth-this.W;
-                    this.pozX = this.X
-                }
+                this.X = poz.keepInWin(this.X,this.W,document.body.clientWidth)    
                 this.W = this.W + 'px';
             }
-
-            this.Y +=  this.mousepoz.y - 20
-            this.pozX += this.mousepoz.x -60
-            this.pozY += this.mousepoz.y -20
+            this.Y +=  this.mousepoz.y
+            this.panend()
         },
         moved:function(dat){
             if(dat.npid == this.pid){
@@ -123,12 +121,12 @@ export default {
         },
         show:function(pid){
             if(this.pid == pid){
-                this.zIndex = 2;
+                this.zIndex = 12;
                 // this.border = "solid 1px white"
                 // setTimeout(() => {
                     // this.border = "solid 1px red"
                 // }, 200);
-            }else this.zIndex=1;
+            }else this.zIndex=11;
         },
         pan:function(e){
             if(this.pid != 0){
@@ -165,7 +163,7 @@ export default {
 }
 .win{
     position: absolute;
-    padding:0px;
+    padding:10px;
     /* width:50%; */
 }
 .full{

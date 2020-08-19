@@ -2,7 +2,7 @@
     <div>
         <div class="window full shadow" :style="shadowstyle">
         </div>
-        <div class="window win container-fluid" :style="style" v-hammer:pan="pan" v-hammer:panend="panend">
+        <div class="window win container-fluid" ref="editbox" :style="style" v-hammer:pan="pan" v-hammer:panend="panend">
             <div class="winbar d-flex">
                 <div class="barbtns">
                     <a class="btn btn-danger" v-on:click="cancel()">x</a>
@@ -13,7 +13,8 @@
                 <textarea class="txt" rows="4" v-if="type == 'new'" name="title" v-model="newtitle" placeholder="title here"></textarea>
             </div>
             <div>
-                <textarea class="txt" rows="4" placeholder="comment here" name="cmt" v-model="cmt"></textarea>
+                <textarea class="txt" rows="4" v-if="type == 'edit'" name="cmt" v-model="cmt" placeholder="comment here"></textarea>
+                <textarea class="txt" rows="4" v-if="type == 'new'" name="cmt" v-model="newcmt" placeholder="comment here"></textarea>
             </div>
             <div>
                 <button type="button" class="btn btn-secondary" v-on:click="cancel()">Close</button>
@@ -24,6 +25,7 @@
 </template>
 <script>
 import req from '../assets/req'
+import poz from '../assets/poz'
 export default {
     name:"dele",
     props:{
@@ -35,7 +37,7 @@ export default {
         return{
             X:30,
             Y:10,
-            zIndex:11,
+            zIndex:1,
             pozX:30,
             pozY:10,
             W:"",
@@ -48,7 +50,7 @@ export default {
     },
     computed:{
         style(){
-            return {left:this.X+"px",display:this.display,top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border}
+            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border}
         },
         shadowstyle(){
             return {display:this.display}
@@ -72,18 +74,19 @@ export default {
     },
     created(){
         this.$bus.on(this.type+"El"+this.el.id,this.show)
+        this.newtitle = this.title
+        this.newcmt = this.cmt
     },
     methods:{
         show:function(dat){
             this.display = 'block'
+            this.zIndex=21
             this.mousepoz = dat.e.center
-            this.setpoz()
-            this.W = document.body.clientWidth-60+"px",
-            this.X = document.body.clientWidth < (this.X+this.W)? document.body.clientWidth-this.W:this.X;
+            this.setpoz()            
+            this.panend()
             this.$bus.emit('blur',3)
         },
         post:function(){
-            $('#'+this.type+this.el.id).modal('toggle')
             if(this.type == 'new'){
                 req.post('new',{title:this.newtitle,pid:this.pid,cmt:this.newcmt})
                 .then((res)=>{
@@ -94,26 +97,26 @@ export default {
                             }
                         })
                     }
-                    this.display = 'none'
                 })
             }else{
                 req.post('save',{"id":this.el.id,"title":this.newtitle,cmt:this.newcmt})
                 .then((res)=>{
                     if(res.data != "mis"){
-                        this.$bus.emit('change'+this.el.id,this.newtitle)
+                        this.$bus.emit('change'+this.el.id,{title:this.newtitle,cmt:this.newcmt})
                     }
-                    this.display = 'none'
                 })
             }
+            this.cancel()
         },
         setpoz:function(){
-            // this.X = this.mousepoz.x
-            // this.pozX = this.mousepoz.x
-
-            this.Y = this.mousepoz.y
-            this.pozY = this.mousepoz.y
+            var div = $('#masterdiv')[0]
+            this.W = poz.setWidth(div.clientWidth)
+            this.X = poz.keepInWin(this.mousepoz.x,this.W,div.clientWidth)
+            this.Y = poz.keepInWin(this.mousepoz.y,this.$refs.editbox.offsetHeight,div.clientHeight)
+            this.W = this.W+'px'
         },
         cancel(){
+            this.zIndex=1
             this.display = 'none'
             this.$bus.emit('blur',0)
         },
@@ -166,7 +169,7 @@ export default {
     width:100%;
     height:100%;
     border:none;
-    z-index:10;
+    z-index:20;
     opacity: 0.5;
 }
 </style>

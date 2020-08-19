@@ -23,7 +23,7 @@ export default {
             el:'',
             X:10,
             Y:10,
-            zIndex:3,
+            zIndex:23,
             pozX:10,
             pozY:10,
             W:250+'px',

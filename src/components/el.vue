@@ -160,8 +160,9 @@ export default {
             else this.el.ct -=1
             this.isct()
         },
-        change(title){
-            this.el.title = title
+        change(dat){
+            this.el.title = dat.title
+            this.el.cmt = dat.cmt
         },
         newEl(dat){
             this.ct("1")
@@ -193,7 +194,6 @@ export default {
 <style scoped>
 .line{
     text-align:left;
-    margin:10px 10px;
 }
 .showhide{
     cursor: pointer;

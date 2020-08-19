@@ -55,7 +55,8 @@ export default {
       this.wins.splice(i,1);
     },
     addHandle:function(el){
-      this.handles.push(el)
+      var i = this.handles.map(item => item.id).indexOf(el.id)
+      if(i == -1)this.handles.push(el)
     }
   }
 }
