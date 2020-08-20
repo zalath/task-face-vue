@@ -1,18 +1,16 @@
 <template>
     <div class="window win container" :style="style" v-hammer:pan="pan" v-hammer:panend="panend">
         <div class="winbar d-flex">
-            <div class="title p-2 flex-grow-1">Moving</div>
             <div class="barbtns">
+                <a class="btn btn-danger" v-on:click="toTop()">^</a>
                 <a class="btn btn-danger" v-on:click="cancel()">x</a>
             </div>
-        </div>
-        <div>
-            <a class="btn btn-danger" v-on:click="cancel()">cancel</a>
         </div>
     </div>
 </template>
 <script>
 import req from '../assets/req'
+import poz from '../assets/poz'
 export default {
     name:"dele",
     data:function(){
@@ -23,19 +21,19 @@ export default {
             zIndex:23,
             pozX:10,
             pozY:10,
-            W:150+'px',
-            border:"solid 1px red",
+            W:100,
+            Width:"",
+            border:"solid 2px red",
             display:'none',
             mousepoz:{x:0,y:0}
         }
     },
     computed:{
         style(){
-            return {left:this.X+"px",display:this.display,top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border}
+            return {left:this.X+"px",display:this.display,top:this.Y+"px",zIndex:this.zIndex,width:this.Width,border:this.border}
         }
     },
     created(){
-
         this.$bus.on('tomove',this.moving)
         this.$bus.on('move',this.moved)
     },
@@ -48,9 +46,11 @@ export default {
         },
         setpoz:function(){
             this.X = this.mousepoz.x
+            // var div = $('#masterdiv')[0]
+            this.X = poz.keepInWin(this.X,this.W,document.body.clientWidth)
+            this.Width = this.W + 'px'
             this.Y = this.mousepoz.y
-            this.pozX = this.mousepoz.x
-            this.pozY = this.mousepoz.y
+            this.panend()
         },
         moved:function(pid){
             req.post('move',{id:this.el.id,npid:pid})
@@ -80,6 +80,9 @@ export default {
             this.pozX = this.X
             this.pozY = this.Y
         },
+        toTop(){
+            this.$bus.emit('move',0)
+        }
     }
 }
 </script>

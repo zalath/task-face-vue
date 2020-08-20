@@ -23,8 +23,9 @@
     - add child /ok
     - delete /ok
     - move between elements /ok
-    - add/move to root level /ing
-    - change element's state
+    - add/move to root level /ok
+    - change element's state /ok
+    - upload image /ing
 - other effect
     - add/change/remove element at the same time in window and tree /ok
 - surface
@@ -32,4 +33,3 @@
     - change window's open effect to layer popup
 - problem
     - when move started, new open elements can't react, use vuex.
-    - cannot move into root level

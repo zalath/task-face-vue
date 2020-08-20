@@ -2,23 +2,28 @@
     <div>
         <div class="window full shadow" :style="shadowstyle">
         </div>
-        <div class="window win container-fluid" ref="editbox" :style="style" v-hammer:pan="pan" v-hammer:panend="panend">
-            <div class="winbar d-flex">
+        <div class="window win container-fluid" ref="editbox" :style="style">
+            <div class="winbar d-flex" v-hammer:pan="pan" v-hammer:panend="panend">
                 <div class="barbtns">
+                    <span class="times">
+                        {{this.el.begintime}} -- {{this.el.endtime}}
+                    </span>
                     <a class="btn btn-danger" v-on:click="cancel()">x</a>
                 </div>
             </div>
-            <div>
-                <textarea class="txt" rows="4" v-if="type == 'edit'" name="title" v-model="title" placeholder="title here"></textarea>
-                <textarea class="txt" rows="4" v-if="type == 'new'" name="title" v-model="newtitle" placeholder="title here"></textarea>
+            <div class="main">
+                <div>
+                    <textarea class="txt" rows="4" v-if="type == 'edit'" name="title" v-model="title" placeholder="title here"></textarea>
+                    <textarea class="txt" rows="4" v-if="type == 'new'" name="title" v-model="newtitle" placeholder="title here"></textarea>
+                </div>
+                <div>
+                    <textarea class="txt" rows="4" v-if="type == 'edit'" name="cmt" v-model="cmt" placeholder="comment here"></textarea>
+                    <textarea class="txt" rows="4" v-if="type == 'new'" name="cmt" v-model="newcmt" placeholder="comment here"></textarea>
+                </div>
             </div>
-            <div>
-                <textarea class="txt" rows="4" v-if="type == 'edit'" name="cmt" v-model="cmt" placeholder="comment here"></textarea>
-                <textarea class="txt" rows="4" v-if="type == 'new'" name="cmt" v-model="newcmt" placeholder="comment here"></textarea>
-            </div>
-            <div>
-                <button type="button" class="btn btn-secondary" v-on:click="cancel()">Close</button>
+            <div class="btns">
                 <button type="button" class="btn btn-primary" v-on:click="post()">Save</button>
+                <button type="button" class="btn btn-secondary" v-on:click="cancel()">Close</button>
             </div>
         </div>
     </div>
@@ -41,23 +46,24 @@ export default {
             pozX:30,
             pozY:10,
             W:"",
-            border:"solid 1px red",
+            border:"solid 2px red",
             display:'none',
             mousepoz:{x:0,y:0},
             newtitle:"",
-            newcmt:""
+            newcmt:"",
+            blur:5
         }
     },
     computed:{
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border}
+            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border,filter:"blur("+this.blur+"px)"}
         },
         shadowstyle(){
             return {display:this.display}
         },
         title:{
             get:function(){
-                return JSON.parse(JSON.stringify(this.el.title))
+                return this.el.title
             },
             set:function(val){
                 this.newtitle = val
@@ -65,7 +71,7 @@ export default {
         },
         cmt:{
             get:function(){
-                return JSON.parse(JSON.stringify(this.el.cmt))
+                return this.el.cmt
             },
             set:function(val){
                 this.newcmt = val
@@ -85,6 +91,7 @@ export default {
             this.setpoz()            
             this.panend()
             this.$bus.emit('blur',3)
+            this.blur = 0
         },
         post:function(){
             if(this.type == 'new'){
@@ -119,6 +126,7 @@ export default {
             this.zIndex=1
             this.display = 'none'
             this.$bus.emit('blur',0)
+            this.blur = 5
         },
         pan:function(e){
             this.Y = this.pozY + e.deltaY
@@ -171,5 +179,16 @@ export default {
     border:none;
     z-index:20;
     opacity: 0.5;
+}
+.main{
+    padding:0px 10px;
+}
+.btns{
+    text-align:right;
+}
+.times{
+    margin:5px 5px;
+    font-size:10px;
+    float:left;
 }
 </style>

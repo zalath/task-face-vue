@@ -21,6 +21,7 @@
 <script>
 import req from "../assets/req"
 import poz from '../assets/poz'
+import TweenLite from 'gsap'
 import el from "./el"
 export default {
     name:"win",
@@ -48,7 +49,10 @@ export default {
             return "window "+this.type+" "+c;
         },
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border,overflow:"auto",filter:"blur("+this.blur+"px)"}
+            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border,overflow:"auto",filter:"blur("+this.turnBlur+"px)"}
+        },
+        turnBlur:function(){
+            return this.shadowBlur.toFixed(0)
         }
     },
     data: function(){
@@ -60,11 +64,18 @@ export default {
             pozX:0,
             pozY:0,
             W:"",
-            // border:"none",//"solid 1px red",
+            border:"solid 2px red",
             isShowTree:true,
             ismined:false,
             blur:0,
+            shadowBlur:0,
             divid:""
+        }
+    },
+    watch:{
+        blur:function(val){
+            console.log(val)
+            TweenLite.to(this.$data,{duration:0.2,shadowBlur:val})
         }
     },
     created(){
@@ -94,7 +105,8 @@ export default {
         setpoz:function(){
             this.X +=  this.mousepoz.x
             if(this.type != 'full'){
-                this.W = document.body.clientWidth/2;
+                var div = $('#masterdiv')[0]
+                this.W = poz.setWidth(div.clientWidth)
                 this.X = poz.keepInWin(this.X,this.W,document.body.clientWidth)    
                 this.W = this.W + 'px';
             }
