@@ -80,6 +80,7 @@ export default {
             .then((res)=>{
                 if(res.data != "mis"){
                     this.$bus.emit('delc'+this.el.pid,this.el)
+                    this.cancel()
                 }
             })
         },

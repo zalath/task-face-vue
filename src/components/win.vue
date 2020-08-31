@@ -164,7 +164,7 @@ export default {
             this.ismined = false
         },
         createEl:function(e){
-            this.$bus.emit('newEl'+this.pid,{e:e});
+            this.$bus.emit('newEl',{e:e,pid:0});
         }
     }
 }
