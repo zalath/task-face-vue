@@ -14,7 +14,8 @@
             <div :style="btnstyle">
             <!-- <button type="button" class="btn btn-primary" data-toggle="modal" :data-target="'#new'+el.id">+</button> -->
             <button type="button" class="btn btn-primary" data-toggle="modal" v-hammer:tap="createEl">+</button>
-            <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" v-hammer:tap="deleteEl">x</button>
+            <!-- <button type="button" class="btn btn-danger" data-toggle="modal" :data-target="'#del'+el.id">x</button> -->
 
             <button type="button" class="btn btn-primary" v-if="isMoving==false" v-hammer:tap="moveStart" data-toggle="modal" data-target="#moving">&gt;</button>
             </div>
@@ -49,7 +50,6 @@ export default {
     created(){
         if(this.el.Child != null)
             this.$bus.emit('showChild'+this.el.id,true)
-        this.$bus.emit('addhandle',this.el)//add handle button
         this.$bus.on('create'+this.el.id,this.newEl)
         this.$bus.on('change'+this.el.id,this.change)
         this.$bus.on('delc'+this.el.id,this.delc)
@@ -81,12 +81,14 @@ export default {
         this.isct()
     },
     methods:{
+        //----tik--------------------------------------------------
         toTik(e){
             this.$bus.emit('totik',{el:this.el,e:e})
         },
         tikk(tik){
             this.el.tik = tik
         },
+        //----tik-end--------------------------------------------------
         isct(){
             if(this.el.ct == 0){
                 this.show(4,4,4)
@@ -97,6 +99,7 @@ export default {
                 this.show(false,true,false)
             }
         },
+        //----move--------------------------------------------------
         moveStart:function(e){
             var nowel = this.el
             this.$bus.emit('tomove',{el:nowel,e:e})
@@ -125,6 +128,7 @@ export default {
         moveCancel(){
             this.isMoving = false
         },
+        //----move-end--------------------------------------------------
         open:function(type){
             if(this.el.Child == null){
                 req.post(type,{id:this.el.id})
@@ -183,10 +187,13 @@ export default {
             }
         },
         createEl(e){
-            this.$bus.emit("newEl"+this.el.id,{e:e})
+            this.$bus.emit("newEl",{e:e,pid:this.el.id})
         },
         editEl(e){
-            this.$bus.emit("editEl"+this.el.id,{e:e})
+            this.$bus.emit("editEl",{e:e,el:this.el})
+        },
+        deleteEl(e){
+            this.$bus.emit("delete",{e:e,el:this.el})
         }
     }
 }

@@ -21,20 +21,22 @@ export default {
     data:function(){
         return{
             el:'',
-            X:10,
-            Y:10,
-            zIndex:23,
-            pozX:10,
-            pozY:10,
-            W:250+'px',
+            p:{
+                X:10,
+                Y:10,
+                zIndex:23,
+                pozX:10,
+                pozY:10,
+                W:250+'px',
+                display:'none',
+            },
             border:"solid 1px red",
-            display:'none',
             mousepoz:{x:0,y:0}
         }
     },
     computed:{
         style(){
-            return {left:this.X+"px",display:this.display,top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border}
+            return {left:this.p.X+"px",display:this.p.display,top:this.p.Y+"px",zIndex:this.p.zIndex,width:this.p.W,border:this.border}
         }
     },
     created(){
@@ -43,38 +45,38 @@ export default {
     methods:{
         totik:function(dat){
             this.el = dat.el
-            this.display = 'block'
+            this.p.display = 'block'
             this.mousepoz = dat.e.center
             this.setpoz()
         },
         setpoz:function(){
-            this.X = this.mousepoz.x
-            this.Y = this.mousepoz.y
-            this.pozX = this.mousepoz.x
-            this.pozY = this.mousepoz.y
+            this.p.X = this.mousepoz.x
+            this.p.Y = this.mousepoz.y
+            this.p.pozX = this.mousepoz.x
+            this.p.pozY = this.mousepoz.y
         },
         tik:function(tik){
             req.post('tik',{id:this.el.id,tik:tik})
             .then((res)=>{
                 if (res.data == 'done'){
-                    this.display = 'none'
+                    this.p.display = 'none'
                     this.$bus.emit('tik'+this.el.id,tik)
                 }else{
-                    this.display = 'none'
+                    this.p.display = 'none'
                 }
             })
         },
         cancel(){
             this.el = ''
-            this.display = 'none'
+            this.p.display = 'none'
         },
         pan:function(e){
-            this.Y = this.pozY + e.deltaY
-            this.X = this.pozX + e.deltaX
+            this.p.Y = this.p.pozY + e.deltaY
+            this.p.X = this.p.pozX + e.deltaX
         },
         panend:function(){
-            this.pozX = this.X
-            this.pozY = this.Y
+            this.p.pozX = this.p.X
+            this.p.pozY = this.p.Y
         },
     }
 }

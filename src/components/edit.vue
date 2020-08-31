@@ -5,6 +5,7 @@
         <div class="window win container-fluid" ref="editbox" :style="style">
             <div class="winbar d-flex" v-hammer:pan="pan" v-hammer:panend="panend">
                 <div class="barbtns">
+                    <div :style="'float: left;width: 10px;height: 10px;margin-top: 9px;margin-left: 6px;background-color:'+tikstate"></div>
                     <span class="times">
                         {{this.el.begintime}} -- {{this.el.endtime}}
                     </span>
@@ -32,22 +33,22 @@
 import req from '../assets/req'
 import poz from '../assets/poz'
 export default {
-    name:"dele",
-    props:{
-        pid:Number,
-        el:{},
-        type:String
-    },
+    name:"edit",
     data:function(){
         return{
-            X:30,
-            Y:10,
-            zIndex:1,
-            pozX:30,
-            pozY:10,
-            W:"",
+            pid:0,
+            el:{},
+            type:"",
+            p:{
+                X:30,
+                Y:10,
+                zIndex:1,
+                pozX:30,
+                pozY:10,
+                W:"",
+                display:'none',
+            },
             border:"solid 2px red",
-            display:'none',
             mousepoz:{x:0,y:0},
             newtitle:"",
             newcmt:"",
@@ -56,10 +57,22 @@ export default {
     },
     computed:{
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border,filter:"blur("+this.blur+"px)"}
+            return {left:this.p.X+"px",top:this.p.Y+"px",zIndex:this.p.zIndex,width:this.p.W,border:this.border,filter:"blur("+this.blur+"px)"}
         },
         shadowstyle(){
-            return {display:this.display}
+            return {display:this.p.display}
+        },
+        tikstate(){
+            switch(this.el.tik){
+                case 1:
+                    return "lightgray"
+                case 0:
+                    return "green"
+                case 2:
+                    return "red"
+                default:
+                    return "none"
+            }
         },
         title:{
             get:function(){
@@ -79,19 +92,30 @@ export default {
         }
     },
     created(){
-        this.$bus.on(this.type+"El"+this.el.id,this.show)
+        this.$bus.on("newEl",this.onNew)
+        this.$bus.on("editEl",this.onEdit)
         this.newtitle = this.title
         this.newcmt = this.cmt
     },
     methods:{
         show:function(dat){
-            this.display = 'block'
-            this.zIndex=21
+            this.p.display = 'block'
+            this.p.zIndex=21
             this.mousepoz = dat.e.center
             this.setpoz()            
             this.panend()
             this.$bus.emit('blur',3)
             this.blur = 0
+        },
+        onNew(p){
+            this.show(p)
+            this.type = "new"
+            this.pid = p.pid
+        },
+        onEdit(p){
+            this.show(p)
+            this.type = "edit"
+            this.el = p.el
         },
         post:function(){
             if(this.type == 'new'){
@@ -117,24 +141,24 @@ export default {
         },
         setpoz:function(){
             var div = $('#masterdiv')[0]
-            this.W = poz.setWidth(div.clientWidth)
-            this.X = poz.keepInWin(this.mousepoz.x,this.W,div.clientWidth)
-            this.Y = poz.keepInWin(this.mousepoz.y,this.$refs.editbox.offsetHeight,div.clientHeight)
-            this.W = this.W+'px'
+            this.p.W = poz.setWidth(div.clientWidth)
+            this.p.X = poz.keepInWin(this.mousepoz.x,this.p.W,div.clientWidth)
+            this.p.Y = poz.keepInWin(this.mousepoz.y,this.$refs.editbox.offsetHeight,div.clientHeight)
+            this.p.W = this.p.W+'px'
         },
         cancel(){
-            this.zIndex=1
-            this.display = 'none'
+            this.p.zIndex=1
+            this.p.display = 'none'
             this.$bus.emit('blur',0)
             this.blur = 5
         },
         pan:function(e){
-            this.Y = this.pozY + e.deltaY
-            this.X = this.pozX + e.deltaX
+            this.p.Y = this.p.pozY + e.deltaY
+            this.p.X = this.p.pozX + e.deltaX
         },
         panend:function(){
-            this.pozX = this.X
-            this.pozY = this.Y
+            this.p.pozX = this.p.X
+            this.p.pozY = this.p.Y
         },
     }
 }

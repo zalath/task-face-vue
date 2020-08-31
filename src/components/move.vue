@@ -16,21 +16,23 @@ export default {
     data:function(){
         return{
             el:'',
-            X:10,
-            Y:10,
-            zIndex:23,
-            pozX:10,
-            pozY:10,
-            W:100,
+            p:{
+                X:10,
+                Y:10,
+                zIndex:23,
+                pozX:10,
+                pozY:10,
+                W:100,
+                display:'none',
+            },
             Width:"",
             border:"solid 2px red",
-            display:'none',
             mousepoz:{x:0,y:0}
         }
     },
     computed:{
         style(){
-            return {left:this.X+"px",display:this.display,top:this.Y+"px",zIndex:this.zIndex,width:this.Width,border:this.border}
+            return {left:this.p.X+"px",display:this.p.display,top:this.p.Y+"px",zIndex:this.p.zIndex,width:this.p.Width,border:this.border}
         }
     },
     created(){
@@ -41,24 +43,24 @@ export default {
         moving:function(dat){
             this.mousepoz = dat.e.center
             this.setpoz()
-            this.display = 'block';
+            this.p.display = 'block';
             this.el =  JSON.parse(JSON.stringify(dat.el))
         },
         setpoz:function(){
-            this.X = this.mousepoz.x
+            this.p.X = this.mousepoz.x
             // var div = $('#masterdiv')[0]
-            this.X = poz.keepInWin(this.X,this.W,document.body.clientWidth)
-            this.Width = this.W + 'px'
-            this.Y = this.mousepoz.y
+            this.p.X = poz.keepInWin(this.p.X,this.p.W,document.body.clientWidth)
+            this.p.Width = this.p.W + 'px'
+            this.p.Y = this.mousepoz.y
             this.panend()
         },
         moved:function(pid){
             req.post('move',{id:this.el.id,npid:pid})
             .then((res)=>{
                 if (res.data == 'done'){
-                    console.log('---------------------------------')
-                    console.log('moved:'+pid+'<-'+this.el.id)
-                    this.display = 'none'
+                    // console.log('---------------------------------')
+                    // console.log('moved:'+pid+'<-'+this.el.id)
+                    this.p.display = 'none'
                     this.$bus.emit('moved',{npid:pid,el:this.el,opid:this.el.pid})
                 }else{
                     this.$bus.emit('movecancel')
@@ -68,17 +70,17 @@ export default {
         cancel(){
             this.$bus.emit('movecancel')
             this.el = ''
-            this.display = 'none'
+            this.p.display = 'none'
         },
         pan:function(e){
             if(this.pid != 0){
-                this.Y = this.pozY + e.deltaY
-                this.X = this.pozX + e.deltaX
+                this.p.Y = this.p.pozY + e.deltaY
+                this.p.X = this.p.pozX + e.deltaX
             }
         },
         panend:function(){
-            this.pozX = this.X
-            this.pozY = this.Y
+            this.p.pozX = this.p.X
+            this.p.pozY = this.p.Y
         },
         toTop(){
             this.$bus.emit('move',0)

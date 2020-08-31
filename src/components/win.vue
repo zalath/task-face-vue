@@ -49,7 +49,7 @@ export default {
             return "window "+this.type+" "+c;
         },
         style(){
-            return {left:this.X+"px",top:this.Y+"px",zIndex:this.zIndex,width:this.W,border:this.border,overflow:"auto",filter:"blur("+this.turnBlur+"px)"}
+            return {left:this.p.X+"px",top:this.p.Y+"px",zIndex:this.p.zIndex,width:this.p.W,border:this.border,overflow:"auto",filter:"blur("+this.turnBlur+"px)"}
         },
         turnBlur:function(){
             return this.shadowBlur.toFixed(0)
@@ -58,12 +58,14 @@ export default {
     data: function(){
         return {
             els:[],
-            X:0,
-            Y:0,
-            zIndex:1,
-            pozX:0,
-            pozY:0,
-            W:"",
+            p:{
+                X:0,
+                Y:0,
+                zIndex:1,
+                pozX:0,
+                pozY:0,
+                W:"",
+            },
             border:"solid 2px red",
             isShowTree:true,
             ismined:false,
@@ -74,7 +76,7 @@ export default {
     },
     watch:{
         blur:function(val){
-            console.log(val)
+            // console.log(val)
             TweenLite.to(this.$data,{duration:0.2,shadowBlur:val})
         }
     },
@@ -82,7 +84,7 @@ export default {
         this.loadEls()
         this.$bus.on('showwin',this.show)
         this.$bus.emit('showwin',this.pid)
-        if(this.type == 'full')this.W = 100+"%"
+        if(this.type == 'full')this.p.W = 100+"%"
         if(this.pid != 0)this.setpoz()
         else this.divid = 'masterdiv'
 
@@ -103,14 +105,14 @@ export default {
             this.els.splice(i,1)
         },
         setpoz:function(){
-            this.X +=  this.mousepoz.x
+            this.p.X +=  this.mousepoz.x
             if(this.type != 'full'){
                 var div = $('#masterdiv')[0]
-                this.W = poz.setWidth(div.clientWidth)
-                this.X = poz.keepInWin(this.X,this.W,document.body.clientWidth)    
-                this.W = this.W + 'px';
+                this.p.W = poz.setWidth(div.clientWidth)
+                this.p.X = poz.keepInWin(this.p.X,this.p.W,document.body.clientWidth)    
+                this.p.W = this.p.W + 'px';
             }
-            this.Y +=  this.mousepoz.y
+            this.p.Y +=  this.mousepoz.y
             this.panend()
         },
         moved:function(dat){
@@ -133,22 +135,22 @@ export default {
         },
         show:function(pid){
             if(this.pid == pid){
-                this.zIndex = 12;
+                this.p.zIndex = 12;
                 // this.border = "solid 1px white"
                 // setTimeout(() => {
                     // this.border = "solid 1px red"
                 // }, 200);
-            }else this.zIndex=11;
+            }else this.p.zIndex=11;
         },
         pan:function(e){
             if(this.pid != 0){
-                this.Y = this.pozY + e.deltaY
-                this.X = this.pozX + e.deltaX
+                this.p.Y = this.p.pozy + e.deltaY
+                this.p.X = this.p.pozx + e.deltaX
             }
         },
         panend:function(){
-            this.pozX = this.X
-            this.pozY = this.Y
+            this.p.pozx = this.p.X
+            this.p.pozy = this.p.Y
         },
         tap:function(){
             if(this.pid != 0)this.$bus.emit('showwin',this.pid)
