@@ -94,8 +94,6 @@ export default {
     created(){
         this.$bus.on("newEl",this.onNew)
         this.$bus.on("editEl",this.onEdit)
-        this.newtitle = this.title
-        this.newcmt = this.cmt
     },
     methods:{
         show:function(dat){
@@ -111,11 +109,15 @@ export default {
             this.show(p)
             this.type = "new"
             this.pid = p.pid
+            this.newtitle = this.title
+            this.newcmt = this.cmt
         },
         onEdit(p){
             this.show(p)
             this.type = "edit"
             this.el = p.el
+            this.newtitle = this.title
+            this.newcmt = this.cmt
         },
         post:function(){
             if(this.type == 'new'){
