@@ -48,6 +48,13 @@
             placeholder="comment here"
           ></textarea>
         </div>
+        <div>
+          <div class="imglist">
+            <img class="imgdiv" v-for="(img,i) in el.imgs" :key="'img-'+el.id+'-'+i" :src="img"/>
+          </div>
+          <div class="imgdiv">
+          </div>
+        </div>
       </div>
       <div class="btns">
         <button type="button" class="btn btn-primary" v-on:click="post()">Save</button>

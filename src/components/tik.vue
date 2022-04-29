@@ -10,15 +10,19 @@
       <div class="barbtns">
         <a
           class="btn btn-primary tik"
-          style="background-color:lightgray !important"
+          style="background-color: lightgray !important"
           v-on:click="tik(1)"
         ></a>
         <a
           class="btn btn-primary tik"
-          style="background-color:green !important"
+          style="background-color: green !important"
           v-on:click="tik(0)"
         ></a>
-        <a class="btn btn-primary tik" style="background-color:red !important" v-on:click="tik(2)"></a>
+        <a
+          class="btn btn-primary tik"
+          style="background-color: red !important"
+          v-on:click="tik(2)"
+        ></a>
         <a class="btn btn-danger" v-on:click="cancel()">x</a>
       </div>
     </div>

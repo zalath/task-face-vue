@@ -42,10 +42,16 @@ export default {
   created: function () {
     this.wins.push({
       type: "full",
-      pid: 0,
+      pid: -1,
       etype: "list",
       title: "",
       mousepoz: { x: 0, y: 0 },
+    },{
+      type:"win",
+      pid:0,
+      etype:"list",
+      title:"menu",
+      mousepoz:{x:0,y:0},
     });
     this.$bus.on("openwin", this.openWin);
     this.$bus.on("closewin", this.closeWin);

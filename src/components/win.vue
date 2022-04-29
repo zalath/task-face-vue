@@ -9,10 +9,8 @@
   >
     <div class="winbar d-flex">
       <div class="title p-2 flex-grow-1">{{title}}</div>
-      <div class="barbtns">
+      <div v-if="pid != -1" class="barbtns">
         <button type="button" class="btn btn-primary" data-toggle="modal" v-hammer:tap="createEl">+</button>
-      </div>
-      <div v-if="pid != 0" class="barbtns">
         <a class="btn btn-danger" v-if="ismined==false" v-on:click="minimize">_</a>
         <a class="btn btn-danger" v-if="ismined==true" v-on:click="normalize">□</a>
         <a class="btn btn-danger" v-on:click="close">x</a>
@@ -43,10 +41,6 @@ export default {
     mousepoz: { x: 0, y: 0 },
   },
   computed: {
-    treeid() {
-      if (this.pid == undefined) return 0;
-      else return this.pid;
-    },
     wintype() {
       var c = "";
       if (this.type == "win") {
@@ -99,7 +93,7 @@ export default {
     this.$bus.on("showwin", this.show);
     this.$bus.emit("showwin", this.pid);
     if (this.type == "full") this.p.W = 100 + "%";
-    if (this.pid != 0) this.setpoz();
+    if (this.pid != -1) this.setpoz();
     else this.divid = "masterdiv";
 
     this.$bus.on("create" + this.pid, this.newEl);
@@ -121,8 +115,7 @@ export default {
     setpoz: function () {
       this.p.X += this.mousepoz.x;
       if (this.type != "full") {
-        var div = $("#masterdiv")[0];
-        this.p.W = poz.setWidth(div.clientWidth);
+        this.p.W = poz.setWidth(document.body.clientWidth);
         this.p.X = poz.keepInWin(this.p.X, this.p.W, document.body.clientWidth);
         this.p.W = this.p.W + "px";
       }
@@ -156,7 +149,7 @@ export default {
       } else this.p.zIndex = 11;
     },
     pan: function (e) {
-      if (this.pid != 0) {
+      if (this.pid != -1) {
         this.p.Y = this.p.pozy + e.deltaY;
         this.p.X = this.p.pozx + e.deltaX;
       }
@@ -166,7 +159,7 @@ export default {
       this.p.pozy = this.p.Y;
     },
     tap: function () {
-      if (this.pid != 0) this.$bus.emit("showwin", this.pid);
+      if (this.pid != -1) this.$bus.emit("showwin", this.pid);
     },
     minimize: function () {
       this.isShowTree = false;
@@ -191,6 +184,7 @@ export default {
 .win {
   position: absolute;
   padding: 10px;
+  max-height: 90%;
   /* width:50%; */
 }
 .full {
@@ -209,5 +203,15 @@ export default {
 }
 .barbtns {
   /* margin-right:-15px; */
+}
+::-webkit-scrollbar{
+  width:10px;
+  border-radius: 0px;
+}
+::-webkit-scrollbar-track{
+  background-color:black;
+}
+::-webkit-scrollbar-thumb{
+  background-color:red;
 }
 </style>

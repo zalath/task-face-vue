@@ -83,10 +83,8 @@ export default {
       this.p.display = "none";
     },
     pan: function (e) {
-      if (this.pid != 0) {
-        this.p.Y = this.p.pozY + e.deltaY;
-        this.p.X = this.p.pozX + e.deltaX;
-      }
+      this.p.Y = this.p.pozY + e.deltaY;
+      this.p.X = this.p.pozX + e.deltaX;
     },
     panend: function () {
       this.p.pozX = this.p.X;

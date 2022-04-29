@@ -7,6 +7,6 @@ export default {
         return max < (val+valv)? max/2-valv/2:val
     },
     setWidth(max){
-        return max < 1920?max-60:max/2
+        return max < 1280?max-60:500
     }
 };

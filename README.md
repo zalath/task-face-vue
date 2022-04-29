@@ -1,35 +1,5 @@
 # task-face-vue
 
-## easy take front end with vue
+## a simple vue front end of task management
 
-## porpuse
-- easy CRUD of tasks /fin
-- display child with window or tree /fin
-- child window movable /fin
-- child window highlight /ing
-- child window minimize to the left buttom
-
-
-## structure
-- wins
-    - new window /ok
-    - close /ok 
-    - minimize /ok
-    - moving /ok
-- elements
-    - real lines /ok
-    - show child /ok
-    - show child in new window /ok
-    - add child /ok
-    - delete /ok
-    - move between elements /ok
-    - add/move to root level /ok
-    - change element's state /ok
-    - upload image /ing
-- other effect
-    - add/change/remove element at the same time in window and tree /ok
-- surface
-    - change list to nodes, add some effect
-    - change window's open effect to layer popup
-- problem
-    - when move started, new open elements can't react, use vuex.
+## can be used now but not easy to use

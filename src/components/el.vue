@@ -230,7 +230,7 @@ export default {
   border-radius: 6px;
   margin-top: 7px;
 }
-.line:hover {
+/* .line:hover {
   background-color: rgba(255, 255, 255, 0.2) !important;
-}
+} */
 </style>
